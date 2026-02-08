@@ -3793,6 +3793,220 @@ function bindPart4(){
   });
 })();
 </script>
+<script>
+/* =========================
+   PATCH COMPAT v1 — ELIMINATOR
+   Objectif: rendre ton HTML actuel compatible avec les scripts Part 2/3/4
+   À coller TOUT À LA FIN (après tes autres <script>)
+========================= */
 
+/* ---------- mini helpers ---------- */
+const _get = (id)=>document.getElementById(id);
+const _renameId = (from,to)=>{
+  const el=_get(from);
+  if(el && !_get(to)) el.id=to;
+};
+const _ensureCanvas = (id)=>{
+  const el=_get(id);
+  if(!el) return;
+  if(el.tagName.toLowerCase()==="canvas") return;
+  const c=document.createElement("canvas");
+  c.id=id;
+  // copie classes si tu en as
+  c.className = el.className || "";
+  el.replaceWith(c);
+};
+
+/* ---------- 1) Fix pollen: doit être un canvas pour setupCanvas/getContext ---------- */
+_ensureCanvas("pollen");
+
+/* ---------- 2) ID mapping: HTML -> ce que le JS Part2/3/4 attend ---------- */
+/* Panels gauche (Part2 attend drawer/drawerBack/drawerClose/drawerResizer) */
+_renameId("leftPanel","drawer");
+_renameId("leftBack","drawerBack");
+_renameId("leftClose","drawerClose");
+_renameId("leftResizer","drawerResizer");
+_renameId("btnLeft","btnMenu");
+
+/* Boutons thème/palette (Part2 attend btnMode/btnPalette + labels modeLabel/paletteLabel) */
+_renameId("btnTheme","btnMode");
+_renameId("themeLbl","modeLabel");
+_renameId("btnSeason","btnPalette");
+_renameId("seasonLbl","paletteLabel");
+
+/* Focus (Part3 attend btnFocus, mais ton HTML l’a déjà; on branche exit) */
+_renameId("btnExitFocus","btnExitFocus"); // noop, juste pour clarté
+
+/* Pomodoro (Part3 attend pomoWrap/pomoTime/pomoLabel/pomoAction/pomoStop) */
+(() => {
+  // Ton HTML n’a pas de conteneur pomoWrap; on crée une “fausse” référence en utilisant progressWrap
+  // mais on préfère mapper directement sur tes IDs existants.
+  // On va créer les IDs attendus en “alias” via clonage invisible si absent.
+  if(!_get("pomoTime") && _get("pomoTime")){} // déjà ok
+  // Ton HTML utilise: pomoTime, pomoHint, btnPomoStart, btnPomoStop, btnPomoToggle, pomoClickZone
+  // On mappe:
+  _renameId("pomoHint","pomoLabel");
+  _renameId("btnPomoStart","pomoAction");
+  // btnPomoStop existe déjà, Part3 attend "pomoStop"
+  _renameId("btnPomoStop","pomoStop");
+
+  // Conteneur wrap attendu
+  if(!_get("pomoWrap")){
+    const w = document.createElement("div");
+    w.id="pomoWrap";
+    // On n’ajoute rien visuellement, on s’en sert pour hidden/show
+    w.style.display="contents";
+    // On prend la ligne pomoRow existante (dans ta card)
+    const row = _get("pomoClickZone")?.closest(".pomoRow");
+    if(row) row.prepend(w), w.append(...Array.from(row.childNodes));
+  }
+})();
+
+/* Progress bar (Part3 attend taskBarFill/taskBarPct) */
+_renameId("barFill","taskBarFill");
+_renameId("barPct","taskBarPct");
+
+/* Current task name + chips + boutons (Part3 attend taskName/chips/btnEtorion/btnKiffance/btnEditTask/btnListToggle) */
+_renameId("etorChips","chips");
+_renameId("btnEto","btnEtorion");
+_renameId("btnKiff","btnKiffance");
+_renameId("btnEdit","btnEditTask");
+_renameId("btnList","btnListToggle");
+
+/* Below list (Part3 attend belowTasks) */
+_renameId("belowRows","belowTasks");
+
+/* Undo (Part3 attend btnUndo déjà présent) OK */
+
+/* ---------- 3) CSS vars alignment for progress colors ---------- */
+(function alignBarVars(){
+  const r = document.documentElement;
+  // si le JS a posé --bar/--bar2, on les recopie vers --barA/--barB attendus par ton CSS
+  const cs = getComputedStyle(r);
+  const bar = cs.getPropertyValue("--bar").trim();
+  const bar2 = cs.getPropertyValue("--bar2").trim();
+  if(bar && !cs.getPropertyValue("--barA").trim()) r.style.setProperty("--barA", bar);
+  if(bar2 && !cs.getPropertyValue("--barB").trim()) r.style.setProperty("--barB", bar2);
+})();
+
+/* ---------- 4) Panels open/close: ton HTML rightPanel ids déjà bons (Part2 utilise rightPanel/rightBack/rightClose/rightResizer) ---------- */
+// ok: rightPanel/rightBack/rightClose/rightResizer existent chez toi
+
+/* ---------- 5) Focus overlay wiring (Part3 toggleFocus) + bouton quitter ---------- */
+(function wireFocusExit(){
+  const exit = _get("btnExitFocus");
+  if(exit){
+    exit.addEventListener("click", ()=>{
+      // Part3 utilise state.focus; si state existe, on l’éteint proprement
+      try{
+        if(window.state){
+          window.state.focus = false;
+          if(window.saveState) window.saveState();
+          if(window.renderAll) window.renderAll();
+        }
+        const fo = _get("focusOverlay");
+        if(fo) fo.style.display = "none";
+        document.body.dataset.focus = "0";
+      }catch(e){}
+    });
+  }
+})();
+
+/* ---------- 6) Modals manquantes: créer des versions minimales pour éviter crash ---------- */
+(function ensureMinimalModals(){
+  const need = [
+    {id:"kiffModal", titleId:"kiffTitle", msgId:"kiffMsg", subId:"kiffSub"},
+    {id:"victoryModal", titleId:"victoryTitle", msgId:"victoryMsg"}
+  ];
+  need.forEach(m=>{
+    if(_get(m.id)) return;
+    const modal = document.createElement("div");
+    modal.className="modal";
+    modal.id=m.id;
+    modal.innerHTML = `
+      <div class="modalCard">
+        <div class="modalHead">
+          <div class="mh" id="${m.titleId}">${m.id==="kiffModal"?"Kiffance":"Victoire"}</div>
+          <div class="muted">Clique n’importe où pour fermer</div>
+        </div>
+        <div class="section">
+          <div id="${m.msgId}" style="font-size:16px; line-height:1.6;"></div>
+          ${m.subId ? `<div id="${m.subId}" class="muted" style="margin-top:10px"></div>` : ``}
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  });
+
+  // calendar modal minimal si absent (Part4 l’utilise)
+  if(!_get("calendarModal")){
+    const modal = document.createElement("div");
+    modal.className="modal";
+    modal.id="calendarModal";
+    modal.innerHTML = `
+      <div class="modalCard">
+        <div class="modalHead">
+          <div class="mh" id="calendarTitle">Calendrier</div>
+          <div class="muted">Clique n’importe où pour fermer</div>
+        </div>
+        <div id="calendarBody"></div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+})();
+
+/* ---------- 7) Patch openModal/closeModal: ton CSS utilise .modalBack + .modal show? (chez toi .modal display:none sans .show)
+   On harmonise: ajoute/retire la classe show + met display:flex
+---------- */
+(function patchModalDisplay(){
+  const open = window.openModal;
+  const close = window.closeModal;
+
+  window.openModal = function(id){
+    const back = _get("modalBack");
+    const el = _get(id);
+    if(!el) return;
+    if(back){ back.style.display="block"; back.classList.add("show"); }
+    el.style.display="flex";
+    el.classList.add("show");
+  };
+
+  window.closeModal = function(id){
+    const back = _get("modalBack");
+    const el = _get(id);
+    if(el){
+      el.classList.remove("show");
+      el.style.display="none";
+    }
+    const any = Array.from(document.querySelectorAll(".modal")).some(m=>m.style.display==="flex");
+    if(back && !any){
+      back.classList.remove("show");
+      back.style.display="none";
+    }
+  };
+
+  // click backdrop close
+  const back = _get("modalBack");
+  if(back){
+    back.addEventListener("click", ()=>{
+      document.querySelectorAll(".modal").forEach(m=>{ m.style.display="none"; m.classList.remove("show"); });
+      back.style.display="none";
+      back.classList.remove("show");
+    });
+  }
+})();
+
+/* ---------- 8) Final: relance render + right panel si dispo ---------- */
+setTimeout(()=>{
+  try{
+    if(window.applyTheme) window.applyTheme();
+    if(window.renderAll) window.renderAll();
+    if(window.renderRightPanel) window.renderRightPanel();
+  }catch(e){}
+}, 0);
+</script>
+
+  
 </body>
 </html>
