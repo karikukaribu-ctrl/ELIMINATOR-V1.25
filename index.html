@@ -4007,6 +4007,61 @@ setTimeout(()=>{
 }, 0);
 </script>
 
-  
+ <script>
+/* --- Saison + mode: synchronisation body dataset + labels --- */
+(function seasonModeSync(){
+  const seasonOrder = ["printemps","ete","automne","hiver"];
+
+  function applyBodySeason(){
+    // body dataset pour CSS (si tu utilises data-season)
+    document.body.setAttribute("data-season", state.ui.palette); // palette = saison
+    // et thème pour CSS (si tu utilises data-theme)
+    document.body.setAttribute("data-theme", state.ui.mode==="foncé" ? "pastel-dark" : "pastel-light");
+
+    // labels topbar
+    const themeLbl = document.getElementById("modeLabel") || document.getElementById("themeLbl");
+    const seasonLbl = document.getElementById("paletteLabel") || document.getElementById("seasonLbl");
+
+    if(themeLbl) themeLbl.textContent = state.ui.mode==="foncé" ? "pastel foncé" : "pastel clair";
+    if(seasonLbl){
+      const nice = ({printemps:"printemps", ete:"été", automne:"automne", hiver:"hiver"})[state.ui.palette] || state.ui.palette;
+      seasonLbl.textContent = nice;
+    }
+  }
+
+  // wrap applyTheme pour forcer dataset après
+  const oldApply = window.applyTheme;
+  window.applyTheme = function(){
+    if(oldApply) oldApply();
+    applyBodySeason();
+  };
+
+  // bouton saison : cycle sur 4 saisons
+  const btn = document.getElementById("btnPalette") || document.getElementById("btnSeason");
+  if(btn){
+    btn.addEventListener("click", ()=>{
+      const i = Math.max(0, seasonOrder.indexOf(state.ui.palette));
+      state.ui.palette = seasonOrder[(i+1)%seasonOrder.length];
+      if(window.saveState) saveState();
+      if(window.applyTheme) applyTheme();
+      if(window.renderAll) renderAll();
+    });
+  }
+
+  // bouton mode : clair/foncé
+  const bMode = document.getElementById("btnMode") || document.getElementById("btnTheme");
+  if(bMode){
+    bMode.addEventListener("click", ()=>{
+      state.ui.mode = (state.ui.mode==="foncé") ? "clair" : "foncé";
+      if(window.saveState) saveState();
+      if(window.applyTheme) applyTheme();
+      if(window.renderAll) renderAll();
+    });
+  }
+
+  // initial
+  applyBodySeason();
+})();
+ </script> 
 </body>
 </html>
