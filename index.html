@@ -4,114 +4,103 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>ELIMINATOR</title>
-
   <style>
     /* ============================================================
-      ELIMINATOR v1.26 — single-file, no external deps
+      ELIMINATOR v1.27 — single-file — 2 parties
+      PARTIE 1/2 : HTML + CSS
       - 2 modes: pastel clair / pastel foncé
-      - palettes saisons: printemps / été / automne / hiver (nature, no mauve)
-      - anime feel: paper grain + ink + gentle wobble + sky clouds + pollen
-      - draggable main "hub"
-      - true focus overlay mode
-      - resizable side panels
-      - rich mood TCC, sets, habits, stats charts, export text
+      - saisons: printemps / été / automne / hiver (nature, no mauve)
+      - topbar sticky vitré
+      - centre scrollable (pas hub absolute)
+      - barre de progression massive + pomodoro intégré sous la barre
+      - panneaux latéraux redimensionnables
+      - focus overlay
     ============================================================ */
 
     :root{
-      --font: ui-rounded, "SF Pro Rounded", "Segoe UI Rounded", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+      --font: ui-rounded, "SF Pro Rounded", "Segoe UI Rounded", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
       --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 
-      /* Layout */
-      --appW: min(1320px, 96vw);
+      --appW: min(1200px, 96vw);
       --radius: 10px;
       --radius2: 8px;
       --lineW: 1px;
 
-      --drawerW: 420px;
-      --rightW: 560px;
-
-      /* Big progress */
-      --progressH: clamp(140px, 22vh, 280px);
-      --pomoH: 56px;
-
-      /* Visual tuning */
-      --blur: 18px;
+      --blur: 16px;
       --shadowA: 0 18px 70px rgba(0,0,0,.14);
       --shadowB: 0 10px 30px rgba(0,0,0,.10);
-      --ink: rgba(20,22,28,.20);
-      --grain: .10;
 
-      /* Theme defaults (overridden by [data-theme] / [data-season]) */
-      --bg: #eef3ff;
-      --fg: #10131a;
-      --muted: rgba(16,19,26,.70);
+      --drawerW: 420px;
+      --rightW: 520px;
 
+      /* Progress size (BIG) */
+      --progressH: clamp(170px, 26vh, 320px);
+
+      /* Defaults overwritten by theme/palette */
+      --bg: #f6fbff;
+      --fg: #11151d;
+      --muted: rgba(17,21,29,.72);
       --glass: rgba(255,255,255,.62);
-      --glass2: rgba(255,255,255,.40);
-      --line: rgba(16,19,26,.16);
+      --glass2: rgba(255,255,255,.36);
+      --line: rgba(17,21,29,.16);
 
-      --accent: rgba(205,120,60,.28);     /* automne ocre */
-      --accent2: rgba(205,120,60,.55);
-      --hilite: rgba(90,170,210,.22);     /* surbrillance soft */
+      --accent: rgba(205,120,60,.28);
+      --accent2: rgba(205,120,60,.68);
 
-      --barA: rgba(205,120,60,.28);
-      --barB: rgba(205,120,60,.72);
+      --barA: rgba(205,120,60,.30);
+      --barB: rgba(205,120,60,.92);
 
-      --chipOn: rgba(16,19,26,.10);
-      --chipDot: rgba(16,19,26,.82);
+      --haloA: rgba(205,120,60,.18);
+      --haloB: rgba(120,160,200,.14);
 
-      /* UI prefs (editable) */
-      --uiDensity: 1;     /* 0.85 compact ... 1.15 spacious */
-      --borderStyle: 1;   /* 0 minimal, 1 normal, 2 inked */
-      --halo: 1;          /* 0 off, 1 on */
-      --titleWobble: 1;   /* 0 off, 1 on */
+      --grain: .10;
+      --uiDensity: 1;
     }
 
     body[data-theme="pastel-dark"]{
-      --bg: #0f172a;
+      --bg: #0f1420;
       --fg: #f2f6ff;
       --muted: rgba(242,246,255,.74);
-
-      --glass: rgba(19,26,44,.66);
-      --glass2: rgba(19,26,44,.36);
+      --glass: rgba(20,28,44,.64);
+      --glass2: rgba(20,28,44,.36);
       --line: rgba(242,246,255,.18);
-
       --shadowA: 0 22px 90px rgba(0,0,0,.46);
       --shadowB: 0 12px 40px rgba(0,0,0,.36);
-      --ink: rgba(255,255,255,.16);
-
-      --chipOn: rgba(242,246,255,.10);
-      --chipDot: rgba(242,246,255,.88);
+      --grain: .12;
     }
 
-    /* Season palettes (nature, no violet) */
+    /* Saison palettes (no mauve) */
     body[data-season="printemps"]{
       --accent: rgba(110,190,150,.26);
-      --accent2: rgba(110,190,150,.62);
-      --barA: rgba(110,190,150,.26);
-      --barB: rgba(110,190,150,.78);
-      --hilite: rgba(255,185,90,.18);
+      --accent2: rgba(110,190,150,.72);
+      --barA: rgba(110,190,150,.28);
+      --barB: rgba(110,190,150,.92);
+      --haloA: rgba(110,190,150,.18);
+      --haloB: rgba(255,185,90,.14);
     }
     body[data-season="ete"]{
       --accent: rgba(90,170,210,.24);
-      --accent2: rgba(90,170,210,.58);
-      --barA: rgba(255,185,90,.28);
-      --barB: rgba(255,185,90,.78);
-      --hilite: rgba(110,190,150,.18);
+      --accent2: rgba(90,170,210,.66);
+      --barA: rgba(255,185,90,.30);
+      --barB: rgba(255,185,90,.92);
+      --haloA: rgba(90,170,210,.14);
+      --haloB: rgba(255,185,90,.14);
     }
     body[data-season="automne"]{
       --accent: rgba(205,120,60,.28);
-      --accent2: rgba(205,120,60,.66);
-      --barA: rgba(205,120,60,.28);
-      --barB: rgba(205,120,60,.86);
-      --hilite: rgba(120,160,200,.16);
+      --accent2: rgba(205,120,60,.72);
+      --barA: rgba(205,120,60,.32);
+      --barB: rgba(205,120,60,.94);
+      --haloA: rgba(205,120,60,.18);
+      --haloB: rgba(150,70,60,.12);
     }
     body[data-season="hiver"]{
       --accent: rgba(120,160,200,.22);
-      --accent2: rgba(120,160,200,.52);
-      --barA: rgba(150,70,60,.24);   /* bordeaux glacé */
-      --barB: rgba(150,70,60,.78);
-      --hilite: rgba(255,185,90,.14);
+      --accent2: rgba(120,160,200,.58);
+      --barA: rgba(150,70,60,.28);   /* bordeaux glacé */
+      --barB: rgba(150,70,60,.92);
+      --haloA: rgba(120,160,200,.14);
+      --haloB: rgba(150,70,60,.14);
     }
 
     *{ box-sizing:border-box; }
@@ -120,30 +109,27 @@
       margin:0;
       font-family: var(--font);
       color: var(--fg);
-      overflow-x:hidden;
       background: var(--bg);
+      overflow-x:hidden;
     }
 
-    /* ---------- Anime-ish background: sky + clouds + grain + ink ---------- */
+    /* Background Ghibli-ish: sky + clouds + grain */
     .bgSky{
-      position:fixed; inset:0;
-      z-index:-10;
+      position:fixed; inset:0; z-index:-10;
       background:
-        radial-gradient(1200px 700px at 18% 15%, rgba(255,255,255,.55), transparent 60%),
-        radial-gradient(1100px 760px at 78% 22%, rgba(0,0,0,.06), transparent 62%),
-        linear-gradient(180deg, rgba(255,255,255,.22), transparent 45%),
+        radial-gradient(1200px 720px at 18% 14%, rgba(255,255,255,.55), transparent 60%),
+        radial-gradient(980px 620px at 78% 20%, rgba(0,0,0,.06), transparent 62%),
+        linear-gradient(180deg, rgba(255,255,255,.18), transparent 45%),
         var(--bg);
       overflow:hidden;
     }
     body[data-theme="pastel-dark"] .bgSky{
       background:
-        radial-gradient(1200px 700px at 18% 15%, rgba(255,255,255,.06), transparent 60%),
-        radial-gradient(1100px 760px at 78% 22%, rgba(0,0,0,.28), transparent 62%),
+        radial-gradient(1200px 720px at 18% 14%, rgba(255,255,255,.06), transparent 60%),
+        radial-gradient(980px 620px at 78% 20%, rgba(0,0,0,.30), transparent 62%),
         linear-gradient(180deg, rgba(255,255,255,.06), transparent 45%),
         var(--bg);
     }
-
-    /* Paper grain */
     .bgSky::after{
       content:"";
       position:absolute; inset:0;
@@ -160,77 +146,53 @@
         repeating-linear-gradient(0deg, rgba(255,255,255,.10) 0, rgba(255,255,255,.10) 1px, transparent 1px, transparent 3px),
         repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0, rgba(255,255,255,.06) 1px, transparent 1px, transparent 4px);
       mix-blend-mode: overlay;
-      opacity: calc(var(--grain) * 1.2);
     }
 
-    /* Clouds (parallax layers) */
     .cloudLayer{
       position:absolute; inset:-20vh -20vw;
       opacity:.55;
-      filter: blur(0.3px);
       pointer-events:none;
+      filter: blur(.3px);
       transform: translate3d(0,0,0);
     }
     .clouds1{
       background:
-        radial-gradient(240px 120px at 12% 18%, rgba(255,255,255,.70), transparent 60%),
-        radial-gradient(320px 160px at 22% 24%, rgba(255,255,255,.55), transparent 62%),
-        radial-gradient(420px 200px at 70% 20%, rgba(255,255,255,.55), transparent 64%),
-        radial-gradient(260px 140px at 78% 28%, rgba(255,255,255,.62), transparent 62%);
+        radial-gradient(280px 140px at 12% 18%, rgba(255,255,255,.70), transparent 60%),
+        radial-gradient(340px 170px at 24% 24%, rgba(255,255,255,.54), transparent 62%),
+        radial-gradient(430px 210px at 70% 20%, rgba(255,255,255,.55), transparent 64%),
+        radial-gradient(260px 140px at 82% 28%, rgba(255,255,255,.62), transparent 62%);
       animation: drift1 42s linear infinite;
     }
     .clouds2{
       opacity:.38;
       background:
-        radial-gradient(320px 160px at 18% 60%, rgba(255,255,255,.45), transparent 62%),
-        radial-gradient(420px 200px at 38% 66%, rgba(255,255,255,.32), transparent 64%),
-        radial-gradient(520px 240px at 82% 62%, rgba(255,255,255,.32), transparent 64%);
+        radial-gradient(320px 160px at 18% 62%, rgba(255,255,255,.45), transparent 62%),
+        radial-gradient(440px 220px at 38% 66%, rgba(255,255,255,.32), transparent 64%),
+        radial-gradient(540px 260px at 82% 62%, rgba(255,255,255,.32), transparent 64%);
       animation: drift2 68s linear infinite;
     }
     body[data-theme="pastel-dark"] .cloudLayer{ opacity:.18; }
-    @keyframes drift1{
-      0%{ transform: translateX(-6%) translateY(0%); }
-      100%{ transform: translateX(6%) translateY(-2%); }
-    }
-    @keyframes drift2{
-      0%{ transform: translateX(6%) translateY(2%); }
-      100%{ transform: translateX(-6%) translateY(0%); }
-    }
+    @keyframes drift1{ 0%{transform:translateX(-6%) translateY(0%)} 100%{transform:translateX(6%) translateY(-2%)} }
+    @keyframes drift2{ 0%{transform:translateX(6%) translateY(2%)} 100%{transform:translateX(-6%) translateY(0%)} }
 
-    /* Floating pollen */
-    .pollen{
-      position:absolute; inset:0;
+    /* Pollen canvas */
+    #pollenCanvas, #confettiCanvas{
+      position:fixed; inset:0; z-index:-5;
+      width:100vw; height:100vh;
       pointer-events:none;
-      opacity:.45;
-      filter: blur(.2px);
     }
-    .pollen i{
-      position:absolute;
-      width: 6px; height: 6px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.18);
-      animation: floaty 9s ease-in-out infinite;
-    }
-    body[data-theme="pastel-dark"] .pollen i{
-      background: rgba(255,255,255,.06);
-    }
-    @keyframes floaty{
-      0%,100%{ transform: translateY(0) translateX(0); opacity:.25; }
-      50%{ transform: translateY(-34px) translateX(12px); opacity:.55; }
-    }
+    #confettiCanvas{ z-index:200; }
 
-    /* ---------- App structure ---------- */
+    /* Layout: topbar sticky + main centered scrollable */
     .wrap{
       min-height:100%;
       display:flex;
       flex-direction:column;
       align-items:center;
-      padding: 14px 14px 24px;
-      gap: 14px;
+      padding: 12px 12px 24px;
+      gap: 12px;
     }
 
-    /* Topbar: glass + blur */
     .topbar{
       width: var(--appW);
       position: sticky;
@@ -238,8 +200,8 @@
       z-index: 60;
 
       display:flex;
-      align-items:center;
       justify-content:space-between;
+      align-items:center;
       gap:10px;
 
       padding: calc(10px * var(--uiDensity)) calc(12px * var(--uiDensity));
@@ -248,20 +210,12 @@
       background: var(--glass);
       backdrop-filter: blur(var(--blur));
       box-shadow: var(--shadowA);
-      overflow:hidden;
-    }
-    /* Ink edge option */
-    body[data-border="2"] .topbar,
-    body[data-border="2"] .card,
-    body[data-border="2"] .panel{
-      box-shadow: var(--shadowA), inset 0 0 0 1px var(--ink);
     }
 
     .tb-left,.tb-right{
       display:flex; align-items:center; gap:8px; flex-wrap:wrap;
       min-width:0;
     }
-    .tb-right{ justify-content:flex-end; }
 
     .btn{
       border: var(--lineW) solid var(--line);
@@ -272,7 +226,8 @@
       font-size: 13px;
       cursor:pointer;
       user-select:none;
-      transition: transform 140ms ease, background 140ms ease, opacity 140ms ease;
+      transition: transform 140ms ease, background 140ms ease;
+      white-space:nowrap;
     }
     .btn:hover{ background: rgba(0,0,0,.04); }
     body[data-theme="pastel-dark"] .btn:hover{ background: rgba(255,255,255,.06); }
@@ -284,7 +239,6 @@
       padding:0;
       font-family: var(--mono);
       font-size: 15px;
-      letter-spacing:0;
     }
 
     .pill{
@@ -295,134 +249,96 @@
       color: var(--muted);
       font-size: 12px;
       font-family: var(--mono);
-      white-space:nowrap;
     }
     body[data-theme="pastel-dark"] .pill{ background: rgba(255,255,255,.05); }
 
-    /* Main scroll area (so it can move, and you can scroll) */
-    .stage{
+    .main{
       width: var(--appW);
       flex:1;
-      position:relative;
-      min-height: calc(100vh - 120px);
-    }
-
-    /* Draggable hub (central menu/app card) */
-    .hub{
-      position:absolute;
-      left: 50%;
-      top: 46%;
-      transform: translate(-50%, -50%);
-      width: min(920px, 96vw);
-      user-select:none;
-    }
-    .hub.dragging{ cursor: grabbing; }
-    .hubHeader{
       display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      margin-bottom: 10px;
-      pointer-events:auto;
+      flex-direction:column;
+      gap: 12px;
+      padding-bottom: 18px;
     }
-    .grab{
-      display:flex; align-items:center; gap:10px;
-      font-family: var(--mono);
-      color: var(--muted);
-      font-size: 12px;
-      cursor: grab;
-    }
-    .grabDot{
-      width: 10px; height: 10px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(0,0,0,.03);
-    }
-    body[data-theme="pastel-dark"] .grabDot{ background: rgba(255,255,255,.05); }
 
-    /* Cards */
     .card{
-      width:100%;
       border: var(--lineW) solid var(--line);
       border-radius: var(--radius);
       background: var(--glass);
       backdrop-filter: blur(var(--blur));
       box-shadow: var(--shadowA);
       overflow:hidden;
-      pointer-events:auto;
       position:relative;
     }
 
-    /* Anime-ish halo */
     .halo{
       position:absolute; inset:-60% -30%;
       pointer-events:none;
-      opacity: calc(.50 * var(--halo));
+      opacity:.52;
       background:
-        radial-gradient(circle at 18% 34%, var(--barB), transparent 54%),
-        radial-gradient(circle at 70% 28%, var(--accent2), transparent 56%),
+        radial-gradient(circle at 18% 34%, var(--haloA), transparent 54%),
+        radial-gradient(circle at 70% 28%, var(--haloB), transparent 56%),
         radial-gradient(circle at 50% 70%, rgba(255,255,255,.10), transparent 56%);
       filter: blur(2px);
       transform: rotate(8deg);
       animation: halo 2.8s ease-in-out infinite alternate;
     }
     @keyframes halo{
-      0%{ transform: rotate(6deg) scale(1.02); opacity: calc(.42 * var(--halo)); }
-      100%{ transform: rotate(10deg) scale(1.10); opacity: calc(.62 * var(--halo)); }
+      0%{ transform: rotate(6deg) scale(1.02); opacity:.42; }
+      100%{ transform: rotate(10deg) scale(1.10); opacity:.62; }
     }
 
-    /* Title / tagline (wobble optional) */
+    /* Title lower (closer to bar) */
     .hero{
-      padding: 14px 14px 0;
+      padding: 18px 14px 6px;
       text-align:center;
     }
     .title{
       font-weight: 950;
       letter-spacing:.08em;
-      font-size: clamp(44px, 5.0vw, 76px);
-      margin: 6px 0 6px;
+      font-size: clamp(42px, 4.7vw, 72px);
+      margin: 10px 0 6px;
       text-shadow: 0 18px 50px rgba(0,0,0,.12);
-      transform: translateZ(0);
-    }
-    body[data-wobble="1"] .title{
-      animation: wobble 7s ease-in-out infinite;
-    }
-    @keyframes wobble{
-      0%,100%{ transform: translateY(0) rotate(-.2deg); }
-      50%{ transform: translateY(2px) rotate(.3deg); }
     }
     .tagline{
       font-family: var(--mono);
       font-size: 13px;
       color: var(--muted);
-      margin-bottom: 10px;
+      margin: 0 0 4px;
     }
 
-    /* Progress + Pomodoro (same card area) */
+    /* Progress BIG + contrast */
     .progressWrap{
-      padding: 14px;
+      padding: 10px 14px 14px;
     }
     .bar{
       height: var(--progressH);
       border-radius: calc(var(--radius) - 2px);
-      border: var(--lineW) solid rgba(0,0,0,.18);
+      border: var(--lineW) solid rgba(0,0,0,.24);
       background: rgba(0,0,0,.04);
       position:relative;
       overflow:hidden;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
     }
     body[data-theme="pastel-dark"] .bar{
-      border-color: rgba(255,255,255,.22);
+      border-color: rgba(255,255,255,.24);
       background: rgba(255,255,255,.06);
+    }
+    .bar::after{
+      content:"";
+      position:absolute; inset:-30%;
+      background: radial-gradient(circle at 20% 30%, rgba(255,255,255,.18), transparent 50%);
+      opacity:.85;
+      pointer-events:none;
     }
     .barFill{
       position:absolute; inset:0;
       width:100%;
       background:
-        radial-gradient(900px 240px at 20% 45%, var(--barB), transparent 62%),
+        radial-gradient(900px 240px at 22% 50%, var(--barB), transparent 62%),
         linear-gradient(90deg, var(--barA), transparent 82%);
       transition: width 260ms ease;
-      filter: saturate(1.10);
+      filter: saturate(1.08);
     }
     .barPct{
       position:absolute; inset:0;
@@ -434,6 +350,7 @@
       pointer-events:none;
     }
 
+    /* Pomodoro row inside progress area */
     .pomoRow{
       margin-top: 12px;
       display:flex;
@@ -449,9 +366,8 @@
     }
     .pomoTime{ font-family: var(--mono); font-size: 22px; letter-spacing:.04em; }
     .pomoHint{ font-family: var(--mono); font-size: 12px; color: var(--muted); }
-    .pomoBtns{ display:flex; gap:8px; flex-wrap:wrap; }
 
-    .underLine{
+    .underBar{
       margin-top: 10px;
       text-align:center;
       color: var(--muted);
@@ -459,13 +375,13 @@
       font-size: 12px;
     }
 
-    /* Task area */
-    .taskCard{ padding: 14px; }
+    /* Task block */
+    .taskWrap{ padding: 12px 14px 16px; }
     .taskName{
       font-weight: 950;
       font-size: clamp(26px, 3.2vw, 54px);
       text-align:center;
-      margin: 6px 0 10px;
+      margin: 8px 0 10px;
       line-height:1.06;
       word-break: break-word;
     }
@@ -489,11 +405,10 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      gap: 14px;
+      gap: 12px;
       flex-wrap:wrap;
-      margin: 6px 0 12px;
+      margin: 8px 0 10px;
     }
-
     .mini{
       border: var(--lineW) solid var(--line);
       border-radius: var(--radius2);
@@ -541,7 +456,6 @@
       opacity:.8;
     }
     body[data-theme="pastel-dark"] .roulette::after{ border-color: rgba(255,255,255,.22); }
-
     .rouletteText{
       font-family: var(--mono);
       font-size: 12px;
@@ -571,6 +485,7 @@
     .bigAction .label b{ font-size: 14px; font-weight: 950; }
     .bigAction .label span{ font-size: 12px; color: var(--muted); font-family: var(--mono); }
 
+    /* Inline list under tasks */
     .belowList{
       margin-top: 10px;
       display:none;
@@ -595,23 +510,24 @@
       font-size: 12px;
       white-space:nowrap;
     }
-    .tools{ display:flex; gap:6px; align-items:center; }
+    .tools{ display:flex; gap:6px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
     .tool{
-      width:34px; height:30px;
-      border-radius: var(--radius2);
       border: var(--lineW) solid var(--line);
-      display:grid; place-items:center;
+      border-radius: var(--radius2);
+      padding: 6px 8px;
       cursor:pointer;
       user-select:none;
+      font-size: 12px;
       font-family: var(--mono);
-      font-size: 13px;
-      transition: transform 140ms ease, background 140ms ease;
+      color: var(--fg);
+      background: transparent;
+      transition: background 140ms ease, transform 140ms ease;
     }
     .tool:hover{ background: rgba(0,0,0,.03); }
     body[data-theme="pastel-dark"] .tool:hover{ background: rgba(255,255,255,.06); }
     .tool:active{ transform: translateY(1px); }
 
-    /* ---------- Side panels ---------- */
+    /* Side panels */
     .backdrop{
       position:fixed; inset:0;
       background: rgba(0,0,0,.18);
@@ -628,14 +544,14 @@
       z-index:90;
       display:flex;
       flex-direction:column;
+      width: min(var(--drawerW), 94vw);
       transform: translateX(-110%);
       transition: transform 220ms ease;
-      width: min(var(--drawerW), 94vw);
     }
     .panel.right{
       right:0; left:auto;
-      transform: translateX(110%);
       width: min(var(--rightW), 94vw);
+      transform: translateX(110%);
     }
     .panel.open{ transform: translateX(0); }
     .backdrop.show{ display:block; }
@@ -665,7 +581,6 @@
     .panel.right .resizer{ left:-6px; }
     .panel:hover .resizer{ opacity:1; }
 
-    /* Tabs */
     .tabs{ display:flex; gap:8px; flex-wrap:wrap; padding: 10px 12px 0; }
     .tab{
       padding: 7px 9px;
@@ -675,7 +590,7 @@
       font-size: 13px;
       color: var(--muted);
       background: transparent;
-      transition: background 140ms ease, transform 140ms ease;
+      transition: background 140ms ease;
       user-select:none;
     }
     .tab:hover{ background: rgba(0,0,0,.03); }
@@ -693,7 +608,6 @@
       background: rgba(0,0,0,.02);
     }
     body[data-theme="pastel-dark"] .section{ background: rgba(255,255,255,.04); }
-
     .section h3{
       margin:0 0 8px;
       font-size: 12px;
@@ -714,46 +628,12 @@
       outline:none;
       font-family: var(--font);
     }
-    textarea{ min-height: 140px; resize:vertical; }
-
+    textarea{ min-height: 160px; resize:vertical; }
     .row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
-    .row > *{ flex:1; min-width: 140px; }
-
+    .row > *{ flex:1; min-width: 160px; }
     .muted{ color: var(--muted); font-family: var(--mono); font-size: 12px; }
 
-    /* Selection chips with dot */
-    .chipsel{
-      display:flex; flex-wrap:wrap; gap:8px;
-      margin-top: 8px;
-    }
-    .opt{
-      display:flex; align-items:center; gap:8px;
-      padding: 8px 10px;
-      border: var(--lineW) solid var(--line);
-      border-radius: 999px;
-      cursor:pointer;
-      user-select:none;
-      background: transparent;
-      transition: transform 140ms ease, background 140ms ease;
-      font-size: 13px;
-    }
-    .opt:hover{ background: rgba(0,0,0,.03); }
-    body[data-theme="pastel-dark"] .opt:hover{ background: rgba(255,255,255,.06); }
-    .dot{
-      width:10px; height:10px;
-      border-radius: 999px;
-      border: var(--lineW) solid var(--line);
-      display:block;
-      position:relative;
-    }
-    .opt.on .dot::after{
-      content:"";
-      position:absolute; inset:2px;
-      border-radius:999px;
-      background: var(--chipDot);
-    }
-
-    /* ---------- Modals ---------- */
+    /* Modals */
     .modalBack{
       position:fixed; inset:0;
       background: rgba(0,0,0,.22);
@@ -769,6 +649,7 @@
       align-items:center;
       justify-content:center;
     }
+    .modal.show, .modalBack.show{ display:flex; }
     .modalCard{
       width: min(1040px, 96vw);
       max-height: 90vh;
@@ -793,14 +674,7 @@
       font-size: 12px;
     }
 
-    /* Confetti */
-    #confetti{
-      position:fixed; inset:0;
-      pointer-events:none;
-      z-index:200;
-    }
-
-    /* ---------- Focus overlay (true mode) ---------- */
+    /* Focus overlay */
     .focusOverlay{
       position:fixed; inset:0;
       display:none;
@@ -817,6 +691,8 @@
         radial-gradient(1200px 700px at 20% 20%, rgba(255,255,255,.06), transparent 62%),
         rgba(0,0,0,.62);
     }
+    .focusOverlay.show{ display:block; }
+
     .focusCard{
       width: min(980px, 96vw);
       margin: 4vh auto;
@@ -833,7 +709,6 @@
       padding: 10px 12px;
       border-bottom: var(--lineW) solid var(--line);
     }
-    .focusTop b{ letter-spacing:.06em; }
     .focusBody{ padding: 14px; }
     .focusBigTask{
       font-weight: 950;
@@ -842,127 +717,128 @@
       text-align:center;
       margin: 12px 0 8px;
     }
-    .focusMini{
-      display:flex; justify-content:center; gap:10px; flex-wrap:wrap;
-      margin-top: 12px;
-    }
 
     @media (max-width: 560px){
       .btn{ font-size: 12px; }
-      .tool{ width:32px; height:28px; }
-      .hub{ width: min(940px, 96vw); }
+      .tool{ font-size: 11px; padding: 6px 7px; }
     }
   </style>
 </head>
 
-<body data-theme="pastel-light" data-season="automne" data-border="1" data-wobble="1">
+<body data-theme="pastel-light" data-season="automne">
   <div class="bgSky" aria-hidden="true">
     <div class="cloudLayer clouds1"></div>
     <div class="cloudLayer clouds2"></div>
-    <div class="pollen" id="pollen"></div>
   </div>
 
-  <canvas id="confetti"></canvas>
+  <canvas id="pollenCanvas"></canvas>
+  <canvas id="confettiCanvas"></canvas>
 
   <!-- LEFT PANEL -->
   <div class="backdrop" id="leftBack"></div>
-  <div class="panel left" id="leftPanel">
+  <div class="panel left" id="leftPanel" aria-hidden="true">
     <div class="resizer" id="leftResizer" title="Redimensionner"></div>
     <div class="panelTop">
-      <div class="ttl">Menu</div>
-      <button class="btn" id="leftClose">Fermer</button>
+      <div class="ttl">menu</div>
+      <button class="btn" id="leftClose">fermer</button>
     </div>
     <div class="tabs" id="leftTabs"></div>
-    <div class="panelBody" id="leftBody">
-      <div class="muted">Chargement…</div>
-    </div>
+    <div class="panelBody" id="leftBody"></div>
   </div>
 
   <!-- RIGHT PANEL -->
   <div class="backdrop" id="rightBack"></div>
-  <div class="panel right" id="rightPanel">
+  <div class="panel right" id="rightPanel" aria-hidden="true">
     <div class="resizer" id="rightResizer" title="Redimensionner"></div>
     <div class="panelTop">
-      <div class="ttl">Panneau</div>
-      <button class="btn" id="rightClose">Fermer</button>
+      <div class="ttl">panneau</div>
+      <button class="btn" id="rightClose">fermer</button>
     </div>
     <div class="tabs" id="rightTabs"></div>
-    <div class="panelBody" id="rightBody">
-      <div class="muted">Chargement…</div>
-    </div>
+    <div class="panelBody" id="rightBody"></div>
   </div>
 
   <!-- MODAL BACKDROP -->
   <div class="modalBack" id="modalBack"></div>
 
   <!-- NOTES MODAL -->
-  <div class="modal" id="notesModal">
+  <div class="modal" id="notesModal" aria-hidden="true">
     <div class="modalCard">
       <div class="modalHead">
-        <div class="mh">Notes</div>
-        <div class="muted">Clique n’importe où pour fermer</div>
+        <div class="mh">notes</div>
+        <div class="muted">clique dehors pour fermer</div>
       </div>
       <div class="section">
-        <h3>Ajouter</h3>
-        <textarea id="noteInput" placeholder="Une note. Pas une encyclopédie."></textarea>
+        <h3>ajouter</h3>
+        <textarea id="noteInput" placeholder="Une note. Pas une saga."></textarea>
         <div class="row" style="margin-top:8px">
-          <button class="btn" id="noteAdd">Ajouter</button>
-          <button class="btn" id="noteClear">Vider</button>
+          <button class="btn" id="noteAdd">ajouter</button>
+          <button class="btn" id="noteClear">vider</button>
         </div>
       </div>
       <div style="height:10px"></div>
       <div class="section">
-        <h3>Historique</h3>
+        <h3>historique</h3>
         <div id="notesList" class="muted"></div>
       </div>
     </div>
   </div>
 
-  <!-- CELEBRATION MODAL -->
-  <div class="modal" id="celeModal">
-    <div class="modalCard" style="min-height:min(72vh,760px); display:flex; flex-direction:column; justify-content:center; overflow:hidden;">
+  <!-- KIFFANCE MODAL -->
+  <div class="modal" id="kiffModal" aria-hidden="true">
+    <div class="modalCard" style="min-height:min(58vh,720px); display:flex; flex-direction:column; justify-content:center; overflow:hidden;">
       <div class="halo" aria-hidden="true"></div>
-      <div id="celeTitle" style="font-size:clamp(24px,4.2vw,58px); font-weight:950; text-align:center; letter-spacing:.04em; margin:0 0 10px;"></div>
-      <div id="celeMsg" style="font-size:clamp(14px,1.8vw,22px); text-align:center; line-height:1.55; max-width:78ch; margin:0 auto 12px;"></div>
-      <div id="celeSub" class="muted" style="text-align:center"></div>
-      <div class="muted" style="margin-top:14px; text-align:center;">Clique n’importe où pour fermer</div>
+      <div id="kiffTitle" style="font-size:clamp(20px,3.8vw,52px); font-weight:950; text-align:center; letter-spacing:.04em; margin:0 0 10px;"></div>
+      <div id="kiffMsg" style="font-size:clamp(14px,1.8vw,22px); text-align:center; line-height:1.55; max-width:78ch; margin:0 auto 12px;"></div>
+      <div id="kiffSub" class="muted" style="text-align:center"></div>
+      <div class="muted" style="margin-top:14px; text-align:center;">clique dehors pour fermer</div>
+    </div>
+  </div>
+
+  <!-- VICTORY MODAL -->
+  <div class="modal" id="victoryModal" aria-hidden="true">
+    <div class="modalCard" style="min-height:min(72vh,780px); display:flex; flex-direction:column; justify-content:center; overflow:hidden;">
+      <div class="halo" aria-hidden="true"></div>
+      <div id="victoryTitle" style="font-size:clamp(22px,4.2vw,58px); font-weight:950; text-align:center; letter-spacing:.04em; margin:0 0 10px;"></div>
+      <div id="victoryMsg" style="font-size:clamp(14px,1.8vw,22px); text-align:center; line-height:1.55; max-width:78ch; margin:0 auto 12px;"></div>
+      <div class="muted" style="text-align:center;">clique dehors pour fermer</div>
     </div>
   </div>
 
   <!-- TASK EDIT MODAL -->
-  <div class="modal" id="taskEditModal">
+  <div class="modal" id="taskEditModal" aria-hidden="true">
     <div class="modalCard">
       <div class="modalHead">
-        <div class="mh">Éditer tâche</div>
-        <div class="muted">Clique n’importe où pour fermer</div>
+        <div class="mh">éditer tâche</div>
+        <div class="muted">clique dehors pour fermer</div>
       </div>
       <div id="taskEditBody"></div>
     </div>
   </div>
 
-  <!-- SET EDIT MODAL -->
-  <div class="modal" id="setEditModal">
+  <!-- CALENDAR DAY MODAL -->
+  <div class="modal" id="calModal" aria-hidden="true">
     <div class="modalCard">
       <div class="modalHead">
-        <div class="mh">Éditer set</div>
-        <div class="muted">Clique n’importe où pour fermer</div>
+        <div class="mh" id="calModalTitle">jour</div>
+        <div class="muted">clique dehors pour fermer</div>
       </div>
-      <div id="setEditBody"></div>
+      <div id="calModalBody"></div>
     </div>
   </div>
 
   <!-- EXPORT MODAL -->
-  <div class="modal" id="exportModal">
+  <div class="modal" id="exportModal" aria-hidden="true">
     <div class="modalCard">
       <div class="modalHead">
-        <div class="mh">Export (texte)</div>
-        <div class="muted">Clique n’importe où pour fermer</div>
+        <div class="mh">export (texte)</div>
+        <div class="muted">clique dehors pour fermer</div>
       </div>
       <div class="section">
-        <h3>Rapport</h3>
+        <h3>rapport</h3>
         <div class="row" style="margin-bottom:8px">
-          <button class="btn" id="expRefresh">Rafraîchir</button>
-          <button class="btn" id="expCopy">Copier</button>
+          <button class="btn" id="expRefresh">rafraîchir</button>
+          <button class="btn" id="expCopy">copier</button>
         </div>
         <textarea id="expOut" style="min-height:320px"></textarea>
       </div>
@@ -970,7 +846,7 @@
   </div>
 
   <!-- FOCUS OVERLAY -->
-  <div class="focusOverlay" id="focusOverlay">
+  <div class="focusOverlay" id="focusOverlay" aria-hidden="true">
     <div class="focusCard">
       <div class="halo" aria-hidden="true"></div>
       <div class="focusTop">
@@ -978,26 +854,26 @@
         <button class="btn" id="btnExitFocus">quitter</button>
       </div>
       <div class="focusBody">
-        <div class="bar" style="height: clamp(160px, 24vh, 320px);">
+        <div class="bar">
           <div class="barFill" id="fBarFill" style="width:100%"></div>
           <div class="barPct" id="fBarPct">100%</div>
         </div>
-        <div class="pomoRow" style="margin-top:12px">
-          <div class="pomoClock" id="fPomoClick">
+
+        <div class="pomoRow">
+          <div class="pomoClock" id="fPomoClick" title="cliquer pour régler">
             <div class="pomoTime" id="fPomoTime">25:00</div>
             <div class="pomoHint" id="fPomoHint">pomodoro</div>
           </div>
-          <div class="pomoBtns">
-            <button class="btn" id="fPomoStart">start</button>
-            <button class="btn" id="fPomoStop" style="display:none">stop</button>
+          <div class="tools">
+            <button class="tool" id="fPomoAction">start</button>
+            <button class="tool" id="fPomoStop" disabled>stop</button>
           </div>
         </div>
 
-        <div class="focusBigTask" id="fTaskName">Aucune tâche</div>
-
+        <div class="focusBigTask" id="fTaskName">aucune tâche</div>
         <div class="chips" id="fChips"></div>
 
-        <div class="focusMini">
+        <div class="actions">
           <div class="mini" id="fUndo"><span class="ic">↶</span><small>undo</small></div>
           <div class="mini" id="fNotes"><span class="ic">✎</span><small>notes</small></div>
           <div class="mini" id="fPause"><span class="ic">⏸</span><small>pause</small></div>
@@ -1012,211 +888,176 @@
     <!-- TOPBAR -->
     <div class="topbar">
       <div class="tb-left">
-        <button class="btn iconbtn" id="btnLeft" title="Menu">≡</button>
+        <button class="btn iconbtn" id="btnLeft" title="menu">≡</button>
 
-        <button class="btn" id="btnTheme" title="Thème">☼ <span id="themeLbl">pastel clair</span></button>
-        <button class="btn" id="btnSeason" title="Palette saison">✿ <span id="seasonLbl">automne</span></button>
+        <button class="btn" id="btnTheme" title="mode">
+          ☼ <span id="themeLbl">pastel clair</span>
+        </button>
 
-        <button class="btn" id="btnFocus" title="Focus">◎ <span id="focusLbl">focus</span></button>
+        <button class="btn" id="btnSeason" title="saison">
+          ✿ <span id="seasonLbl">automne</span>
+        </button>
+
+        <button class="btn" id="btnFocus" title="focus">
+          ◎ <span>focus</span>
+        </button>
 
         <span class="pill" id="hudPill">0/0 · 00:00</span>
       </div>
 
       <div class="tb-right">
-        <button class="btn iconbtn" id="btnRight" title="Panneau">▦</button>
+        <button class="btn iconbtn" id="btnRight" title="panneau">▦</button>
       </div>
     </div>
 
-    <!-- STAGE: scrollable, hub draggable -->
-    <div class="stage" id="stage">
-      <div class="hub" id="hub">
-        <div class="hubHeader">
-          <div class="grab" id="hubGrab" title="Glisser pour déplacer">
-            <span class="grabDot"></span><span class="grabDot"></span><span class="grabDot"></span>
-            <span>déplacer</span>
-          </div>
-          <div class="muted" id="hubHint">Le hub est déplaçable. Ton empire aussi.</div>
+    <!-- MAIN CENTER (scrollable normal) -->
+    <div class="main">
+      <div class="card" id="mainCard">
+        <div class="halo" aria-hidden="true"></div>
+
+        <div class="hero">
+          <div class="title" id="appTitle">ELIMINATOR</div>
+          <div class="tagline" id="tagline">Ton empire réclame un coup de balai cosmique.</div>
         </div>
 
-        <div class="card" id="mainCard">
-          <div class="halo" aria-hidden="true"></div>
-
-          <div class="hero">
-            <div class="title" id="appTitle">ELIMINATOR</div>
-            <div class="tagline" id="tagline">Ton royaume n’a pas demandé à être conquis. Tant pis.</div>
+        <div class="progressWrap">
+          <div class="bar" title="La barre part de 100% et diminue">
+            <div class="barFill" id="barFill" style="width:100%"></div>
+            <div class="barPct" id="barPct">100%</div>
           </div>
 
-          <div class="progressWrap">
-            <div class="bar" title="La barre part de 100% et diminue">
-              <div class="barFill" id="barFill" style="width:100%"></div>
-              <div class="barPct" id="barPct">100%</div>
+          <div class="pomoRow" id="pomoRow">
+            <div class="pomoClock" id="pomoClick" title="cliquer pour régler">
+              <div class="pomoTime" id="pomoTime">25:00</div>
+              <div class="pomoHint" id="pomoHint">pomodoro prêt</div>
             </div>
-
-            <div class="pomoRow">
-              <div class="pomoClock" id="pomoClickZone" title="Cliquer pour réglages (menu gauche)">
-                <div class="pomoTime" id="pomoTime">25:00</div>
-                <div class="pomoHint" id="pomoHint">pomodoro prêt</div>
-              </div>
-
-              <div class="pomoBtns">
-                <button class="btn" id="btnPomoToggle">masquer</button>
-                <button class="btn" id="btnPomoStart">start</button>
-                <button class="btn" id="btnPomoStop" style="display:none;">stop</button>
-              </div>
-            </div>
-
-            <div class="underLine" id="underBarLine">Ici, on avance. Même si le destin fait la grimace.</div>
-          </div>
-
-          <div class="taskCard">
-            <div class="taskName" id="taskName">Aucune tâche</div>
-            <div class="chips" id="etorChips"></div>
-
-            <div class="actions">
-              <div class="mini" id="btnUndo" title="Annuler">
-                <span class="ic">↶</span><small>undo</small>
-              </div>
-
-              <div class="roulette" id="btnRoulette" title="Roulette">
-                <div class="rouletteText">roulette</div>
-              </div>
-
-              <div class="bigAction" id="btnEto" title="Dégommer 1 étorion">
-                <div class="em">/</div>
-                <div class="label">
-                  <b>dégommer</b>
-                  <span>1 étorion</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="actions" style="margin-top:0">
-              <div class="mini" id="btnNotes"><span class="ic">✎</span><small>notes</small></div>
-              <div class="mini" id="btnList"><span class="ic">≣</span><small>liste</small></div>
-              <div class="mini" id="btnEdit"><span class="ic">⌁</span><small>édit</small></div>
-              <div class="mini" id="btnPause"><span class="ic">⏸</span><small>pause</small></div>
-              <div class="mini" id="btnKiff"><span class="ic">✶</span><small>kiff</small></div>
-            </div>
-
-            <div class="belowList" id="belowList">
-              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px;">
-                <div class="muted">liste en cours</div>
-                <button class="btn" id="btnHideList">masquer</button>
-              </div>
-              <div id="belowRows"></div>
+            <div class="tools">
+              <button class="tool" id="pomoToggle">masquer</button>
+              <button class="tool" id="pomoAction">start</button>
+              <button class="tool" id="pomoStop" disabled>stop</button>
             </div>
           </div>
+
+          <div class="underBar" id="underBarLine">Ici, on avance. Même si le destin fait la grimace.</div>
         </div>
 
+        <div class="taskWrap">
+          <div class="taskName" id="taskName">aucune tâche</div>
+          <div class="chips" id="etorChips"></div>
+
+          <div class="actions">
+            <div class="mini" id="btnUndo"><span class="ic">↶</span><small>undo</small></div>
+
+            <div class="roulette" id="btnRoulette" title="roulette">
+              <div class="rouletteText">roulette</div>
+            </div>
+
+            <div class="bigAction" id="btnEto" title="dégommer 1 étorion">
+              <div class="em">/</div>
+              <div class="label">
+                <b>dégommer</b>
+                <span>1 étorion</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions" style="margin-top:0">
+            <div class="mini" id="btnNotes"><span class="ic">✎</span><small>notes</small></div>
+            <div class="mini" id="btnList"><span class="ic">≣</span><small>liste</small></div>
+            <div class="mini" id="btnEdit"><span class="ic">⌁</span><small>édit</small></div>
+            <div class="mini" id="btnPause"><span class="ic">⏸</span><small>pause</small></div>
+            <div class="mini" id="btnKiff"><span class="ic">✶</span><small>kiff</small></div>
+          </div>
+
+          <div class="belowList" id="belowList">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px;">
+              <div class="muted">liste en cours</div>
+              <button class="btn" id="btnHideList">masquer</button>
+            </div>
+            <div id="belowRows"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-<!-- =========================
-PARTIE 2/4 — JS (state, sauvegarde, confetti, pollen, drag hub, panels, modals)
-À coller APRÈS la PARTIE 1/4 (dans le même fichier .html), avant PARTIE 3/4.
-========================= -->
-<script>
-/* -------------------------
-  ELIMINATOR — core runtime v1.25+
-  Part 2/4: state + storage + themes + effects + panels + modals + draggable hub
-  (zéro dépendance externe)
-------------------------- */
 
-/* ===== Utils ===== */
-const $ = (id)=>document.getElementById(id);
-const $$ = (sel, root=document)=>Array.from(root.querySelectorAll(sel));
+  <!-- PARTIE 2/2 JS juste après -->
+
+  <!-- =========================
+PARTIE 2/2 — JS complet (state, thèmes saisons, tâches, progression, pomodoro, focus, kiffance, panels, sets/habits/mood/calendar/stats/export)
+À coller APRÈS la PARTIE 1/2, dans le même fichier .html
+========================= -->
+
+<script>
+/* ============================================================
+  ELIMINATOR v1.26.2 — Part 2/2
+  Objectif: robuste, zéro dépendances, IDs cohérents, 2 modes visuels + saisons
+============================================================ */
+
+/* ---------- Utils ---------- */
+const $ = (id) => document.getElementById(id);
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 const clamp = (n,a,b)=>Math.max(a, Math.min(b,n));
 const uid = ()=>Math.random().toString(36).slice(2,10)+"_"+Date.now().toString(36);
 const nowISO = ()=>new Date().toISOString();
-const dayKey = (d=new Date())=>{
+const escapeHTML = (s)=>String(s??"").replace(/[&<>"']/g,c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[c]));
+const isReduced = ()=>window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function dayKey(d=new Date()){
   const y=d.getFullYear();
   const m=String(d.getMonth()+1).padStart(2,"0");
   const da=String(d.getDate()).padStart(2,"0");
   return `${y}-${m}-${da}`;
-};
-const escapeHTML = (s)=>String(s||"").replace(/[&<>"']/g,c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[c]));
-const prefersReducedMotion = ()=>window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+function formatMMSS(ms){
+  const s = Math.max(0, Math.floor(ms/1000));
+  const mm = String(Math.floor(s/60)).padStart(2,"0");
+  const ss = String(s%60).padStart(2,"0");
+  return `${mm}:${ss}`;
+}
 
-/* ===== Storage ===== */
-const LS_KEY = "eliminator_ghibli_unified_v1_26";
-
-/* ===== Palettes (4 saisons, nature, pas de mauve) =====
-   -> Deux modes visuels seulement au runtime: "clair" et "foncé"
-   -> Mais on choisit une palette (saison) qui teinte l’app.
-*/
-const PALETTES = {
-  printemps: {
-    name: "Printemps",
-    light: { bg:"#F6FBF7", fg:"#1B1F1C", muted:"rgba(27,31,28,.66)", glass:"rgba(255,255,255,.62)", glass2:"rgba(255,255,255,.38)", line:"rgba(27,31,28,.16)", shadow:"0 18px 70px rgba(0,0,0,.10)", halo:"rgba(124,220,170,.22)", halo2:"rgba(255,195,130,.18)", accent:"#7CDBA3", accent2:"rgba(124,219,163,.42)", bar:"#B36B00", bar2:"rgba(255,171,64,.55)" },
-    dark:  { bg:"#111613", fg:"#F0FFF7", muted:"rgba(240,255,247,.66)", glass:"rgba(18,26,21,.62)", glass2:"rgba(18,26,21,.38)", line:"rgba(240,255,247,.14)", shadow:"0 20px 90px rgba(0,0,0,.42)", halo:"rgba(124,220,170,.14)", halo2:"rgba(255,195,130,.12)", accent:"#7CDBA3", accent2:"rgba(124,219,163,.30)", bar:"#D88B18", bar2:"rgba(216,139,24,.52)" }
-  },
-  ete: {
-    name: "Été",
-    light: { bg:"#F7FAFF", fg:"#121826", muted:"rgba(18,24,38,.64)", glass:"rgba(255,255,255,.60)", glass2:"rgba(255,255,255,.36)", line:"rgba(18,24,38,.16)", shadow:"0 18px 75px rgba(0,0,0,.10)", halo:"rgba(125,210,255,.20)", halo2:"rgba(255,220,120,.18)", accent:"#7FD2FF", accent2:"rgba(127,210,255,.40)", bar:"#B46A00", bar2:"rgba(255,176,64,.58)" },
-    dark:  { bg:"#0F141E", fg:"#F2F7FF", muted:"rgba(242,247,255,.65)", glass:"rgba(20,28,44,.62)", glass2:"rgba(20,28,44,.38)", line:"rgba(242,247,255,.14)", shadow:"0 20px 95px rgba(0,0,0,.45)", halo:"rgba(125,210,255,.14)", halo2:"rgba(255,220,120,.12)", accent:"#7FD2FF", accent2:"rgba(127,210,255,.30)", bar:"#D98A12", bar2:"rgba(217,138,18,.52)" }
-  },
-  automne: {
-    name: "Automne",
-    light: { bg:"#FFF9F2", fg:"#231B14", muted:"rgba(35,27,20,.66)", glass:"rgba(255,255,255,.60)", glass2:"rgba(255,255,255,.36)", line:"rgba(35,27,20,.18)", shadow:"0 18px 75px rgba(0,0,0,.10)", halo:"rgba(181,70,34,.16)", halo2:"rgba(210,160,70,.18)", accent:"#D17A3B", accent2:"rgba(209,122,59,.40)", bar:"#6B1F1A", bar2:"rgba(107,31,26,.52)" },
-    dark:  { bg:"#17110C", fg:"#FFF2E6", muted:"rgba(255,242,230,.66)", glass:"rgba(28,20,14,.62)", glass2:"rgba(28,20,14,.38)", line:"rgba(255,242,230,.14)", shadow:"0 20px 95px rgba(0,0,0,.45)", halo:"rgba(181,70,34,.12)", halo2:"rgba(210,160,70,.10)", accent:"#D17A3B", accent2:"rgba(209,122,59,.30)", bar:"#8A2A22", bar2:"rgba(138,42,34,.50)" }
-  },
-  hiver: {
-    name: "Hiver",
-    light: { bg:"#F6FBFF", fg:"#141B22", muted:"rgba(20,27,34,.66)", glass:"rgba(255,255,255,.62)", glass2:"rgba(255,255,255,.38)", line:"rgba(20,27,34,.16)", shadow:"0 18px 80px rgba(0,0,0,.10)", halo:"rgba(150,220,255,.18)", halo2:"rgba(180,255,210,.14)", accent:"#96DCFF", accent2:"rgba(150,220,255,.40)", bar:"#B36B00", bar2:"rgba(255,171,64,.56)" },
-    dark:  { bg:"#0E1418", fg:"#F2FDFF", muted:"rgba(242,253,255,.66)", glass:"rgba(18,26,30,.62)", glass2:"rgba(18,26,30,.38)", line:"rgba(242,253,255,.14)", shadow:"0 20px 95px rgba(0,0,0,.45)", halo:"rgba(150,220,255,.12)", halo2:"rgba(180,255,210,.10)", accent:"#96DCFF", accent2:"rgba(150,220,255,.28)", bar:"#D88916", bar2:"rgba(216,137,22,.52)" }
-  }
-};
-
-/* ===== Default State ===== */
-const defaultState = {
-  ui: {
-    mode: "clair",          // "clair" | "foncé" (2 modes seulement)
-    palette: "printemps",   // saisons
-    radius: 6,              // moins arrondi
-    density: "medium",      // "tight" | "medium" | "airy" (visuel)
-    contrast: 1.0,          // lisibilité textes (applique sur muted)
-    barH: 64,               // barre plus grande
-    barMinVH: 18,           // doit occuper une place
-    showPomodoro: true,
-    showTagline: true,
-    showCounters: false,
-    reduceMotion: false,    // override si besoin
-    hub: { x:null, y:null } // position du “centre”
-  },
-  layout: {
-    drawerW: 420,
-    rightW: 520
-  },
-  timer: {
-    running: true,
-    startedAt: null,
-    pausedAt: null,
-    pausedTotal: 0
-  },
-  pomodoro: {
-    minutes: 25,
-    running: false,
-    paused: false,
-    endsAt: null,
-    pausedLeftMs: null,
-    visible: true
-  },
-  notes: [],
-  history: [],         // snapshots
-  stats: {
-    tasksDone: 0,
-    etorionsDone: 0
-  },
-  undo: []
-};
-
+/* ---------- Storage ---------- */
+const LS_KEY = "eliminator_v1_26_2";
 function deepAssign(t,s){
   for(const k in s){
     if(s[k] && typeof s[k]==="object" && !Array.isArray(s[k]) && t[k]){
       deepAssign(t[k], s[k]);
-    }else t[k]=s[k];
+    } else t[k]=s[k];
   }
 }
+const defaultState = {
+  ui:{
+    theme:"pastel-light",     // "pastel-light" | "pastel-dark" (2 modes seulement)
+    season:"automne",         // "printemps" | "ete" | "automne" | "hiver"
+    showTagline:true,
+    showPomodoro:true,
+    showBelowList:false,
+    reduceMotion:false,
+    // progress size (CSS variable written by JS)
+    progressH: null,          // null => CSS default
+    // panels width
+    leftW: 420,
+    rightW: 560
+  },
+  timer:{ startedAt:null, pausedAt:null, pausedTotal:0 },
+  pomodoro:{ minutes:25, running:false, paused:false, endsAt:null, pausedLeftMs:null, visible:true },
+  tasks:[],
+  baseline:{ totalTasks:0, totalEtorions:0 },
+  currentTaskId:null,
+  undo:[],
+  stats:{ tasksDone:0, etorionsDone:0 },
+  notes:[],
+  // right panel features
+  sets:{ list:[], selectedId:null },
+  habits:[],
+  mood:{ entries:[] },
+  planner:{ items:[] },
+  kiffance:{
+    enabledBuckets:["5","10","15","25"],
+    bank:{ "5":[], "10":[], "15":[], "25":[] },
+    lastPickAt:null
+  }
+};
 
 function loadState(){
   try{
@@ -1226,80 +1067,95 @@ function loadState(){
     const merged = structuredClone(defaultState);
     deepAssign(merged, parsed);
     return merged;
-  }catch(e){
+  }catch(_){
     return structuredClone(defaultState);
   }
 }
 let state = loadState();
+function saveState(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(_){} }
 
-function saveState(){
-  try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
-}
+/* ============================================================
+  THEMES: 2 modes visuels + 4 saisons (nature, pas de mauve)
+  -> On utilise CSS (data-theme + data-season) dans PARTIE 1
+============================================================ */
+const SEASONS = ["printemps","ete","automne","hiver"];
+const THEMES  = ["pastel-light","pastel-dark"];
 
-/* ===== Apply Theme (CSS vars) ===== */
 function applyTheme(){
-  const pal = PALETTES[state.ui.palette] || PALETTES.printemps;
-  const mode = (state.ui.mode==="foncé") ? "dark" : "light";
-  const v = pal[mode];
+  document.body.dataset.theme  = state.ui.theme;
+  document.body.dataset.season = state.ui.season;
 
-  // body dataset (utilisé par CSS si PARTIE 1 le supporte)
-  document.body.dataset.mode = state.ui.mode;
-  document.body.dataset.palette = state.ui.palette;
+  // labels topbar
+  if($("themeLbl"))  $("themeLbl").textContent  = (state.ui.theme==="pastel-dark") ? "pastel foncé" : "pastel clair";
+  if($("seasonLbl")) $("seasonLbl").textContent = state.ui.season;
 
-  const root = document.documentElement;
-  root.style.setProperty("--bg", v.bg);
-  root.style.setProperty("--fg", v.fg);
-  // lisibilité: on “remonte” le muted via contrast
-  const c = clamp(Number(state.ui.contrast)||1, 0.85, 1.25);
-  // trick: on garde l’alpha, on renforce via CSS filter sur texte? -> simple: remplacer muted par une valeur plus “opaque”
-  // on prend la même couleur que fg mais alpha ajusté
-  const mutedAlpha = clamp(0.62 * c, 0.52, 0.80);
-  root.style.setProperty("--muted", mode==="dark" ? `rgba(242,253,255,${mutedAlpha})` : `rgba(20,27,34,${mutedAlpha})`);
+  // progress size override if asked
+  if(state.ui.progressH){
+    document.documentElement.style.setProperty("--progressH", state.ui.progressH);
+  } else {
+    document.documentElement.style.removeProperty("--progressH");
+  }
 
-  root.style.setProperty("--glass", v.glass);
-  root.style.setProperty("--glass2", v.glass2);
-  root.style.setProperty("--line", v.line);
-  root.style.setProperty("--shadow", v.shadow);
+  // panel width
+  document.documentElement.style.setProperty("--drawerW", `${clamp(state.ui.leftW, 320, 980)}px`);
+  document.documentElement.style.setProperty("--rightW",  `${clamp(state.ui.rightW, 320, 980)}px`);
 
-  root.style.setProperty("--halo", v.halo);
-  root.style.setProperty("--halo2", v.halo2);
-
-  root.style.setProperty("--accent", v.accent);
-  root.style.setProperty("--accent2", v.accent2);
-
-  // barre progression (plus contrastée, ocre/bordeaux selon saison)
-  root.style.setProperty("--bar", v.bar);
-  root.style.setProperty("--bar2", v.bar2);
-
-  // radius + densities
-  root.style.setProperty("--radius", `${clamp(state.ui.radius, 0, 14)}px`);
-  const dens = state.ui.density||"medium";
-  root.style.setProperty("--pad", dens==="tight" ? "10px" : dens==="airy" ? "18px" : "14px");
-  root.style.setProperty("--gap", dens==="tight" ? "10px" : dens==="airy" ? "18px" : "14px");
-
-  // bar height + minimum presence
-  root.style.setProperty("--barH", `${clamp(state.ui.barH, 42, 110)}px`);
-  root.style.setProperty("--barMinVH", `${clamp(state.ui.barMinVH, 12, 28)}vh`);
-
-  // resizable panels widths
-  root.style.setProperty("--drawerW", `${clamp(state.layout.drawerW, 320, 980)}px`);
-  root.style.setProperty("--rightW", `${clamp(state.layout.rightW, 320, 980)}px`);
-
-  // motion
-  const rm = !!state.ui.reduceMotion || prefersReducedMotion();
+  // reduce motion
+  const rm = !!state.ui.reduceMotion || isReduced();
   document.body.dataset.reduceMotion = rm ? "1" : "0";
-
-  // top mini labels (si existent)
-  if($("modeLabel")) $("modeLabel").textContent = state.ui.mode==="clair" ? "pastel clair" : "pastel foncé";
-  if($("paletteLabel")) $("paletteLabel").textContent = (PALETTES[state.ui.palette]?.name||state.ui.palette).toLowerCase();
 }
 
-/* =========================
-   Effects: Confetti + Pollen
-========================= */
+/* ============================================================
+  PANELS open/close + resizers
+============================================================ */
+function panelOpen(which, open){
+  const p = $(which==="left" ? "leftPanel" : "rightPanel");
+  const b = $(which==="left" ? "leftBack"  : "rightBack");
+  if(!p || !b) return;
+  p.classList.toggle("open", !!open);
+  b.classList.toggle("show", !!open);
+}
+function initPanelResizer(which){
+  const handle = $(which==="left" ? "leftResizer" : "rightResizer");
+  if(!handle) return;
+  let drag=false, sx=0, sw=0;
+
+  const down = (x)=>{
+    drag=true; sx=x;
+    sw = which==="left" ? (state.ui.leftW||420) : (state.ui.rightW||560);
+    handle.setPointerCapture?.(0);
+  };
+  const move = (x)=>{
+    if(!drag) return;
+    const dx = x - sx;
+    if(which==="left"){
+      state.ui.leftW = clamp(sw + dx, 320, 980);
+    }else{
+      state.ui.rightW = clamp(sw - dx, 320, 980);
+    }
+    applyTheme();
+  };
+  const up = ()=>{
+    if(!drag) return;
+    drag=false;
+    saveState();
+  };
+
+  handle.addEventListener("mousedown",(e)=>{ e.preventDefault(); down(e.clientX); });
+  window.addEventListener("mousemove",(e)=>move(e.clientX));
+  window.addEventListener("mouseup",up);
+
+  handle.addEventListener("touchstart",(e)=>{ e.preventDefault(); down(e.touches[0].clientX); }, {passive:false});
+  window.addEventListener("touchmove",(e)=>move(e.touches[0].clientX), {passive:true});
+  window.addEventListener("touchend",up);
+}
+
+/* ============================================================
+  FX: confetti + pollen (canvas)
+============================================================ */
 const fx = {
-  conf: { canvas:null, ctx:null, pieces:[], raf:null },
-  pollen: { canvas:null, ctx:null, seeds:[], raf:null }
+  conf:{ ctx:null, pieces:[], raf:null },
+  pollen:{ ctx:null, seeds:[], raf:null }
 };
 
 function setupCanvas(id){
@@ -1316,45 +1172,37 @@ function setupCanvas(id){
   };
   window.addEventListener("resize", resize);
   resize();
-  return { canvas:c, ctx };
+  return ctx;
 }
-
 function initFX(){
-  const conf = setupCanvas("confetti");
-  if(conf){ fx.conf.canvas=conf.canvas; fx.conf.ctx=conf.ctx; }
-
-  const pol = setupCanvas("pollen");
-  if(pol){ fx.pollen.canvas=pol.canvas; fx.pollen.ctx=pol.ctx; startPollen(); }
+  fx.conf.ctx = setupCanvas("confetti");
+  fx.pollen.ctx = setupCanvas("pollen");
+  startPollen();
 }
 
-function confettiBurst(str=1){
+function confettiBurst(power=1){
   if(!fx.conf.ctx) return;
-  if(!!state.ui.reduceMotion || prefersReducedMotion()) return;
-
-  const w = window.innerWidth, h = window.innerHeight;
-  const n = Math.floor(160 * str);
-  const cx = w/2, cy = h*0.28;
+  if(document.body.dataset.reduceMotion==="1") return;
+  const ctx = fx.conf.ctx;
+  const n = Math.floor(140*power);
+  const cx = window.innerWidth/2;
+  const cy = window.innerHeight*0.22;
 
   for(let i=0;i<n;i++){
     fx.conf.pieces.push({
-      x: cx, y: cy,
-      vx: (Math.random()-0.5) * 11 * str,
-      vy: (Math.random()-0.9) * 16 * str,
-      g: (0.28 + Math.random()*0.22) * (0.85 + str*0.18),
-      s: 2 + Math.random()*4*str,
-      life: 80 + Math.random()*70,
+      x:cx, y:cy,
+      vx:(Math.random()-0.5)*10*power,
+      vy:(Math.random()-0.9)*16*power,
+      g:(0.25+Math.random()*0.22)*(0.9+power*0.2),
+      s:2+Math.random()*4*power,
+      life: 70+Math.random()*70,
       rot: Math.random()*Math.PI,
-      vr: (Math.random()-0.5)*0.35
+      vr:(Math.random()-0.5)*0.35
     });
   }
-  animateConfetti();
-}
+  if(!fx.conf.raf) fx.conf.raf = requestAnimationFrame(confLoop);
 
-function animateConfetti(){
-  if(fx.conf.raf) return;
-  const ctx = fx.conf.ctx;
-
-  const step = ()=>{
+  function confLoop(){
     ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
     fx.conf.pieces = fx.conf.pieces.filter(p=>p.life>0);
 
@@ -1364,61 +1212,61 @@ function animateConfetti(){
 
     for(const p of fx.conf.pieces){
       p.vy += p.g;
-      p.x += p.vx;
-      p.y += p.vy;
+      p.x += p.vx; p.y += p.vy;
       p.rot += p.vr;
       p.life -= 1;
 
       ctx.save();
       ctx.translate(p.x,p.y);
       ctx.rotate(p.rot);
-      ctx.fillRect(-p.s, -p.s, p.s*2, p.s*2);
+      ctx.fillRect(-p.s,-p.s,p.s*2,p.s*2);
       ctx.restore();
     }
+    ctx.globalAlpha = 1;
 
     if(fx.conf.pieces.length){
-      fx.conf.raf = requestAnimationFrame(step);
+      fx.conf.raf = requestAnimationFrame(confLoop);
     }else{
       cancelAnimationFrame(fx.conf.raf);
       fx.conf.raf = null;
       ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
     }
-  };
-  fx.conf.raf = requestAnimationFrame(step);
+  }
 }
 
-/* --- Pollen (ambiance Ghibli) --- */
 function startPollen(){
   if(!fx.pollen.ctx) return;
-
-  // seeds
-  const makeSeed = ()=>({
-    x: Math.random()*window.innerWidth,
-    y: Math.random()*window.innerHeight,
-    r: 0.8 + Math.random()*2.2,
-    a: 0.08 + Math.random()*0.18,
-    vx: (Math.random()*0.18 + 0.04) * (Math.random()<0.5?-1:1),
-    vy: (Math.random()*0.22 + 0.04),
-    wob: Math.random()*Math.PI*2,
-    wobv: 0.006 + Math.random()*0.012
-  });
-
-  const target = 70;
-  while(fx.pollen.seeds.length < target) fx.pollen.seeds.push(makeSeed());
-
   const ctx = fx.pollen.ctx;
+
+  const rm = document.body.dataset.reduceMotion==="1";
+  if(rm){
+    ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+    if(fx.pollen.raf){ cancelAnimationFrame(fx.pollen.raf); fx.pollen.raf=null; }
+    return;
+  }
+
+  const makeSeed = ()=>({
+    x:Math.random()*window.innerWidth,
+    y:Math.random()*window.innerHeight,
+    r:0.7+Math.random()*2.0,
+    a:0.07+Math.random()*0.16,
+    vx:(Math.random()*0.18+0.04)*(Math.random()<0.5?-1:1),
+    vy:(Math.random()*0.22+0.04),
+    wob:Math.random()*Math.PI*2,
+    wobv:0.006+Math.random()*0.012
+  });
+  const target=72;
+  while(fx.pollen.seeds.length<target) fx.pollen.seeds.push(makeSeed());
+
   const loop = ()=>{
-    // si reduce motion => stop
-    const rm = !!state.ui.reduceMotion || prefersReducedMotion();
-    if(rm){
+    if(document.body.dataset.reduceMotion==="1"){
       ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
-      fx.pollen.raf = null;
+      fx.pollen.raf=null;
       return;
     }
-
     ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
 
-    const halo = getComputedStyle(document.documentElement).getPropertyValue("--halo").trim() || "rgba(180,200,255,.14)";
+    const halo = getComputedStyle(document.documentElement).getPropertyValue("--accent2").trim() || "rgba(0,0,0,.12)";
     ctx.fillStyle = halo;
 
     for(const s of fx.pollen.seeds){
@@ -1426,27 +1274,25 @@ function startPollen(){
       s.x += s.vx + Math.sin(s.wob)*0.25;
       s.y += s.vy;
 
-      // wrap
-      if(s.y > window.innerHeight + 20){ s.y = -20; s.x = Math.random()*window.innerWidth; }
-      if(s.x < -20) s.x = window.innerWidth + 20;
-      if(s.x > window.innerWidth + 20) s.x = -20;
+      if(s.y>window.innerHeight+20){ s.y=-20; s.x=Math.random()*window.innerWidth; }
+      if(s.x<-20) s.x=window.innerWidth+20;
+      if(s.x>window.innerWidth+20) s.x=-20;
 
       ctx.globalAlpha = s.a;
       ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
       ctx.fill();
     }
     ctx.globalAlpha = 1;
 
     fx.pollen.raf = requestAnimationFrame(loop);
   };
-
   if(!fx.pollen.raf) fx.pollen.raf = requestAnimationFrame(loop);
 }
 
-/* =========================
-   Modals (1 seule couche)
-========================= */
+/* ============================================================
+  MODALS
+============================================================ */
 function openModal(id){
   const back = $("modalBack");
   const el = $(id);
@@ -1455,12 +1301,10 @@ function openModal(id){
   el.classList.add("show");
 }
 function closeModal(id){
-  const back = $("modalBack");
   const el = $(id);
   if(el) el.classList.remove("show");
-  // si aucune modal visible => remove back
-  const any = $$(".modal.show").length>0;
-  if(back && !any) back.classList.remove("show");
+  const back = $("modalBack");
+  if(back && $$(".modal.show").length===0) back.classList.remove("show");
 }
 function closeAllModals(){
   $$(".modal.show").forEach(m=>m.classList.remove("show"));
@@ -1471,357 +1315,13 @@ function bindModalClose(){
   const back = $("modalBack");
   if(back) back.addEventListener("click", closeAllModals);
   $$(".modal").forEach(m=>{
-    m.addEventListener("click",(e)=>{
-      // click outside card closes, inside doesn't
-      if(e.target === m) closeAllModals();
-    });
+    m.addEventListener("click",(e)=>{ if(e.target===m) closeAllModals(); });
   });
 }
 
-/* =========================
-   Panels: left drawer + right panel (resizable)
-========================= */
-function setPanel(openId, backId, isOpen){
-  const p = $(openId), b=$(backId);
-  if(!p || !b) return;
-  p.classList.toggle("open", !!isOpen);
-  b.classList.toggle("show", !!isOpen);
-}
-function openDrawer(){ setPanel("drawer","drawerBack", true); }
-function closeDrawer(){ setPanel("drawer","drawerBack", false); }
-function openRight(){ setPanel("rightPanel","rightBack", true); }
-function closeRight(){ setPanel("rightPanel","rightBack", false); }
-
-function initResizer(handleId, which){
-  const handle = $(handleId);
-  if(!handle) return;
-
-  let dragging=false, startX=0, startW=0;
-
-  const down = (x)=>{
-    dragging=true;
-    startX=x;
-    startW = which==="left" ? (state.layout.drawerW||420) : (state.layout.rightW||520);
-  };
-  const move = (x)=>{
-    if(!dragging) return;
-    const dx = x - startX;
-    if(which==="left"){
-      state.layout.drawerW = clamp(startW + dx, 320, 980);
-    }else{
-      state.layout.rightW = clamp(startW - dx, 320, 980);
-    }
-    applyTheme();
-  };
-  const up = ()=>{
-    if(!dragging) return;
-    dragging=false;
-    saveState();
-  };
-
-  handle.addEventListener("mousedown",(e)=>{ e.preventDefault(); down(e.clientX); });
-  window.addEventListener("mousemove",(e)=>move(e.clientX));
-  window.addEventListener("mouseup", up);
-
-  handle.addEventListener("touchstart",(e)=>{
-    e.preventDefault();
-    down(e.touches[0].clientX);
-  }, {passive:false});
-  window.addEventListener("touchmove",(e)=>move(e.touches[0].clientX), {passive:true});
-  window.addEventListener("touchend", up);
-}
-
-/* =========================
-   Draggable HUB (centre)
-   -> tu peux “déplacer” le bloc central (main card) sans figer la page.
-========================= */
-function initHubDrag(){
-  const hub = $("hub");
-  const grip = $("hubGrip"); // petit handle si prévu
-  if(!hub) return;
-
-  const target = grip || hub;
-
-  // restore position
-  const applyHubPos = ()=>{
-    const x = state.ui.hub?.x, y = state.ui.hub?.y;
-    if(typeof x==="number" && typeof y==="number"){
-      hub.style.transform = `translate(${x}px, ${y}px)`;
-      hub.dataset.dragged = "1";
-    }else{
-      hub.style.transform = "";
-      hub.dataset.dragged = "0";
-    }
-  };
-  applyHubPos();
-
-  let dragging=false, sx=0, sy=0, bx=0, by=0;
-
-  const start = (x,y)=>{
-    dragging=true;
-    sx=x; sy=y;
-    const curX = (typeof state.ui.hub?.x==="number") ? state.ui.hub.x : 0;
-    const curY = (typeof state.ui.hub?.y==="number") ? state.ui.hub.y : 0;
-    bx=curX; by=curY;
-    hub.classList.add("dragging");
-  };
-  const move = (x,y)=>{
-    if(!dragging) return;
-    const dx=x-sx, dy=y-sy;
-    state.ui.hub.x = clamp(bx+dx, -window.innerWidth*0.25, window.innerWidth*0.25);
-    state.ui.hub.y = clamp(by+dy, -window.innerHeight*0.25, window.innerHeight*0.25);
-    hub.style.transform = `translate(${state.ui.hub.x}px, ${state.ui.hub.y}px)`;
-    hub.dataset.dragged = "1";
-  };
-  const stop = ()=>{
-    if(!dragging) return;
-    dragging=false;
-    hub.classList.remove("dragging");
-    saveState();
-  };
-
-  target.addEventListener("mousedown",(e)=>{
-    // éviter drag quand tu sélectionnes du texte / inputs
-    const tag = (e.target?.tagName||"").toLowerCase();
-    if(["input","textarea","select","button"].includes(tag)) return;
-    e.preventDefault();
-    start(e.clientX, e.clientY);
-  });
-  window.addEventListener("mousemove",(e)=>move(e.clientX, e.clientY));
-  window.addEventListener("mouseup", stop);
-
-  target.addEventListener("touchstart",(e)=>{
-    const tag = (e.target?.tagName||"").toLowerCase();
-    if(["input","textarea","select","button"].includes(tag)) return;
-    start(e.touches[0].clientX, e.touches[0].clientY);
-  }, {passive:true});
-  window.addEventListener("touchmove",(e)=>move(e.touches[0].clientX, e.touches[0].clientY), {passive:true});
-  window.addEventListener("touchend", stop);
-
-  // double click => reset position
-  target.addEventListener("dblclick", ()=>{
-    state.ui.hub.x = null;
-    state.ui.hub.y = null;
-    hub.style.transform = "";
-    hub.dataset.dragged = "0";
-    saveState();
-  });
-}
-
-/* =========================
-   Undo snapshots (core)
-========================= */
-function pushUndo(label, payload){
-  state.undo = state.undo || [];
-  state.undo.unshift({
-    label,
-    at: Date.now(),
-    payload: payload ? structuredClone(payload) : null
-  });
-  state.undo = state.undo.slice(0, 18);
-  saveState();
-}
-
-/* =========================
-   Timer (global) — part2 only “clock”
-   (Pomodoro complet dans PARTIE 3)
-========================= */
-function timerNowMs(){
-  if(!state.timer.startedAt) return 0;
-  const now = Date.now();
-  const paused = state.timer.pausedTotal || 0;
-  const extraPaused = state.timer.pausedAt ? (now - state.timer.pausedAt) : 0;
-  return Math.max(0, now - state.timer.startedAt - paused - extraPaused);
-}
-function toggleGlobalPause(){
-  if(!state.timer.startedAt) state.timer.startedAt = Date.now();
-  if(state.timer.pausedAt){
-    state.timer.pausedTotal = (state.timer.pausedTotal||0) + (Date.now()-state.timer.pausedAt);
-    state.timer.pausedAt = null;
-    state.timer.running = true;
-  }else{
-    state.timer.pausedAt = Date.now();
-    state.timer.running = false;
-  }
-  saveState();
-}
-
-/* =========================
-   Boot hooks (wire UI)
-========================= */
-function bindChrome(){
-  // topbar buttons (si existent)
-  if($("btnMenu")) $("btnMenu").addEventListener("click",(e)=>{ e.stopPropagation(); openDrawer(); });
-  if($("drawerBack")) $("drawerBack").addEventListener("click", closeDrawer);
-  if($("drawerClose")) $("drawerClose").addEventListener("click",(e)=>{ e.stopPropagation(); closeDrawer(); });
-
-  if($("btnRight")) $("btnRight").addEventListener("click",(e)=>{ e.stopPropagation(); openRight(); });
-  if($("rightBack")) $("rightBack").addEventListener("click", closeRight);
-  if($("rightClose")) $("rightClose").addEventListener("click",(e)=>{ e.stopPropagation(); closeRight(); });
-
-  // theme toggle (2 modes)
-  if($("btnMode")){
-    $("btnMode").addEventListener("click",()=>{
-      state.ui.mode = (state.ui.mode==="clair") ? "foncé" : "clair";
-      saveState();
-      applyTheme();
-    });
-  }
-
-  // palette cycle (saisons)
-  if($("btnPalette")){
-    $("btnPalette").addEventListener("click",()=>{
-      const keys = Object.keys(PALETTES);
-      const i = Math.max(0, keys.indexOf(state.ui.palette));
-      state.ui.palette = keys[(i+1)%keys.length];
-      saveState();
-      applyTheme();
-    });
-  }
-
-  // motion toggle
-  if($("btnMotion")){
-    $("btnMotion").addEventListener("click",()=>{
-      state.ui.reduceMotion = !state.ui.reduceMotion;
-      saveState();
-      applyTheme();
-      startPollen();
-    });
-  }
-
-  // counters toggle
-  if($("btnCounters")){
-    $("btnCounters").addEventListener("click",()=>{
-      state.ui.showCounters = !state.ui.showCounters;
-      saveState();
-      document.body.dataset.counters = state.ui.showCounters ? "1" : "0";
-    });
-  }
-
-  // global pause
-  if($("btnPause")){
-    $("btnPause").addEventListener("click",()=>{
-      toggleGlobalPause();
-      // icône update (si exist)
-      if($("btnPause")) $("btnPause").textContent = state.timer.pausedAt ? "▶" : "⏸";
-    });
-  }
-
-  // esc closes everything
-  document.addEventListener("keydown",(e)=>{
-    if(e.key==="Escape"){
-      closeAllModals();
-      closeDrawer();
-      closeRight();
-    }
-  });
-}
-
-/* =========================
-   Init (part2)
-========================= */
-(function bootPart2(){
-  applyTheme();
-
-  // datasets initial
-  document.body.dataset.counters = state.ui.showCounters ? "1" : "0";
-  if(!state.timer.startedAt) state.timer.startedAt = Date.now();
-
-  initFX();
-  bindModalClose();
-
-  initResizer("drawerResizer","left");
-  initResizer("rightResizer","right");
-  initHubDrag();
-
-  bindChrome();
-
-  // If you want: a tiny “hello” pollen kickoff
-  startPollen();
-})();
-</script>
-<!-- =========================
-PARTIE 3/4 — JS (tâches, import, progression, focus, pomodoro intégré, kiffance, rendu UI)
-À coller APRÈS la PARTIE 2/4, avant la PARTIE 4/4.
-Aucun symbole “flou” ajouté à la fin : que du code + mots simples.
-========================= -->
-<script>
-/* -------------------------
-  ELIMINATOR — core app logic v1.26
-  Part 3/4: tasks + progress + focus + pomodoro (dans la carte barre) + kiffance + rendering
-------------------------- */
-
-/* =========================================================
-   DATA MODEL — tâches + catégories + baseline (run)
-   ========================================================= */
-
-/* --- Complète le state créé en PARTIE 2 si absent --- */
-state.tasks = Array.isArray(state.tasks) ? state.tasks : [];
-state.baseline = state.baseline || { totalTasks: 0, totalEtorions: 0 };
-state.currentTaskId = state.currentTaskId || null;
-state.focus = !!state.focus;
-
-state.filters = state.filters || {
-  activeCats: [],          // si vide => toutes
-  showDoneInList: false
-};
-
-state.kiffance = state.kiffance || {
-  // “surprise mode”: on n’affiche pas la banque par défaut
-  revealBank: false,
-  // buckets minutes (clés string)
-  bank: state.kiffance?.bank || {"5":[], "10":[], "15":[], "25":[]},
-  // quel(s) bucket(s) sont autorisés pour tirage rapide
-  enabledBuckets: state.kiffance?.enabledBuckets || ["5","10","15","25"],
-  lastPickAt: state.kiffance?.lastPickAt || null
-};
-
-/* =========================================================
-   SEED KIFFANCE (beaucoup, surprises, absurdes, décompression)
-   (Tu peux éditer en PARTIE 4 dans le panneau gauche)
-   ========================================================= */
-(function seedKiffance(){
-  const b = state.kiffance.bank;
-  const empty = ["5","10","15","25"].every(k=>Array.isArray(b[k]) && b[k].length===0);
-  if(!empty) return;
-
-  b["5"] = [
-    "Regarde un point fixe. Devient une statue légendaire pendant 20 secondes. Reviens au monde.",
-    "Marche 45 secondes comme un héros de JRPG qui vient d’obtenir une quête.",
-    "Bois un verre d’eau avec l’autorité d’un vieux druide. Aucun compromis.",
-    "Respire 5 cycles lents. Épaules basses. Tu es une montagne.",
-    "Étire nuque/épaules 60 secondes. Comme si tu dépliais tes ailes.",
-    "Range 10 objets. Pas 11. La 11e est un piège dimensionnel.",
-    "Lave tes mains en mode rituel. ‘Je bénis ce clavier.’",
-    "Micro-scan du corps: front, mâchoire, ventre. Relâche. Continue."
-  ];
-  b["10"] = [
-    "Reset noble: eau + fenêtre 2 min + retour.",
-    "Décharge mentale: écris 8 lignes, puis stop. Pas de roman.",
-    "Mini-étirements 4 min + eau. Reprise propre.",
-    "Nettoie une surface ‘zone sacrée’. 3 minutes. C’est fini.",
-    "Marche 6 min sans téléphone. Reviens avec une seule intention.",
-    "Snack simple sans écran. Tu es un moine guerrier."
-  ];
-  b["15"] = [
-    "Marche 10 + eau 5. Pas de scroll, pas de négociation.",
-    "Respiration 4-6 pendant 6 min + étirements 6 min + 3 min calme.",
-    "Petite musique + rangement doux 12 min + 3 min reprise.",
-    "Douche rapide (ou visage/nuque) + retour ‘propre’."
-  ];
-  b["25"] = [
-    "Vraie pause: 20 min hors écran + 5 min reprise lente.",
-    "Marche dehors + retour avec une seule priorité écrite.",
-    "Micro-sieste 15–20 min + eau + reprise.",
-    "Pause ‘Ghibli’: lumière, thé, silence, puis retour (sans téléphone)."
-  ];
-
-  saveState();
-})();
-
-/* =========================================================
-   PARSING INBOX — catégories en MAJ, “titre 6” => étorions
-   ========================================================= */
+/* ============================================================
+  TASKS: import, baseline, progress, current, list
+============================================================ */
 function isAllCapsLine(line){
   const t = (line||"").trim();
   if(!t) return false;
@@ -1837,50 +1337,42 @@ function parseTaskLine(line){
 
   let et = null;
   let title = cleaned;
-
   const m = cleaned.match(/^(.*?)(?:\s*[-–—]\s*|\s+)(\d+)\s*$/);
   if(m){
     title = m[1].trim();
-    et = parseInt(m[2],10);
+    et = clamp(parseInt(m[2],10)||1, 1, 99);
   }
   title = title.replace(/\s+/g," ").trim();
   if(!title) return null;
 
-  if(et!==null) et = clamp(et, 1, 99);
-  return { title, etorions: et };
+  return { title, etorions: et ?? 1 };
 }
 function importFromInbox(text){
   const lines = String(text||"").split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
   let cat = "Inbox";
   const out = [];
   for(const line of lines){
-    if(isAllCapsLine(line)){
-      cat = line.trim();
-      continue;
-    }
+    if(isAllCapsLine(line)){ cat = line.trim(); continue; }
     const p = parseTaskLine(line);
     if(!p) continue;
     out.push({
       id: uid(),
       title: p.title,
       cat,
-      etorionsTotal: p.etorions ?? 1,
-      etorionsLeft: p.etorions ?? 1,
-      pinned: false,
-      done: false,
+      etorionsTotal: p.etorions,
+      etorionsLeft: p.etorions,
+      pinned:false,
+      done:false,
       createdAt: nowISO(),
-      doneAt: null
+      doneAt:null
     });
   }
   return out;
 }
 
-/* =========================================================
-   TASK CORE
-   ========================================================= */
 function activeTasks(){ return state.tasks.filter(t=>!t.done); }
 function doneTasks(){ return state.tasks.filter(t=>t.done); }
-function getTaskById(id){ return state.tasks.find(t=>t.id===id) || null; }
+function getTask(id){ return state.tasks.find(t=>t.id===id) || null; }
 
 function sortTasks(list){
   return [...list].sort((a,b)=>{
@@ -1890,33 +1382,23 @@ function sortTasks(list){
   });
 }
 
-function ensureCurrentTask(){
-  const list = activeTasks();
-  if(list.length===0){
-    state.currentTaskId = null;
-    return;
-  }
-  const cur = getTaskById(state.currentTaskId);
-  if(!cur || cur.done){
-    const pinned = list.find(t=>t.pinned);
-    state.currentTaskId = (pinned || sortTasks(list)[0]).id;
-  }
-}
-function setCurrentTask(id){
-  state.currentTaskId = id;
-  if(!state.timer.startedAt) state.timer.startedAt = Date.now();
-  saveState();
-}
-
-function recomputeBaselineIfNeeded(force=false){
-  const base = state.baseline || (state.baseline={totalTasks:0,totalEtorions:0});
-  if(force || (base.totalTasks===0 && base.totalEtorions===0 && state.tasks.length>0)){
+function ensureBaseline(force=false){
+  if(!state.baseline) state.baseline = { totalTasks:0, totalEtorions:0 };
+  if(force || (state.baseline.totalTasks===0 && state.tasks.length>0)){
     const act = activeTasks();
-    base.totalTasks = act.length;
-    base.totalEtorions = act.reduce((a,t)=>a+(t.etorionsTotal||0),0);
+    state.baseline.totalTasks = act.length;
+    state.baseline.totalEtorions = act.reduce((a,t)=>a+(t.etorionsTotal||0),0);
   }
 }
-
+function ensureCurrentTask(){
+  const act = sortTasks(activeTasks());
+  if(act.length===0){ state.currentTaskId=null; return; }
+  const cur = getTask(state.currentTaskId);
+  if(!cur || cur.done){
+    const pinned = act.find(t=>t.pinned);
+    state.currentTaskId = (pinned||act[0]).id;
+  }
+}
 function computeProgress(){
   const baseT = state.baseline.totalTasks || 0;
   const baseE = state.baseline.totalEtorions || 0;
@@ -1924,47 +1406,40 @@ function computeProgress(){
   const remT = rem.length;
   const remE = rem.reduce((a,t)=>a+(t.etorionsLeft||0),0);
 
-  // barre: reste / baseline
   const pct = (baseT<=0) ? 100 : clamp(Math.round((remT/baseT)*100), 0, 100);
   return { baseT, baseE, remT, remE, pct };
 }
 
-/* =========================================================
-   UNDO — on stocke uniquement ce qui bouge (tâches + baseline + stats)
-   ========================================================= */
-function pushUndoTasks(label){
-  pushUndo(label, {
-    tasks: structuredClone(state.tasks),
-    baseline: structuredClone(state.baseline),
-    currentTaskId: state.currentTaskId,
-    stats: structuredClone(state.stats),
-    focus: !!state.focus
+function pushUndo(label){
+  state.undo.unshift({
+    label, at:Date.now(),
+    payload:{
+      tasks: structuredClone(state.tasks),
+      baseline: structuredClone(state.baseline),
+      currentTaskId: state.currentTaskId,
+      stats: structuredClone(state.stats),
+      pomodoro: structuredClone(state.pomodoro)
+    }
   });
+  state.undo = state.undo.slice(0,18);
 }
-function undoTasks(){
-  const snap = (state.undo||[]).shift();
+function undo(){
+  const snap = state.undo.shift();
   if(!snap || !snap.payload) return;
-  const p = snap.payload;
-  if(p.tasks) state.tasks = p.tasks;
-  if(p.baseline) state.baseline = p.baseline;
-  if("currentTaskId" in p) state.currentTaskId = p.currentTaskId;
-  if(p.stats) state.stats = p.stats;
-  if("focus" in p) state.focus = !!p.focus;
-
+  state.tasks = snap.payload.tasks || state.tasks;
+  state.baseline = snap.payload.baseline || state.baseline;
+  state.currentTaskId = snap.payload.currentTaskId ?? state.currentTaskId;
+  state.stats = snap.payload.stats || state.stats;
+  state.pomodoro = snap.payload.pomodoro || state.pomodoro;
   saveState();
   renderAll();
 }
 
-/* =========================================================
-   ACTIONS — dégommage étorion / fin tâche / suppression
-   ========================================================= */
 function degommeEtorion(){
-  const t = getTaskById(state.currentTaskId);
+  const t = getTask(state.currentTaskId);
   if(!t || t.done) return;
-
-  pushUndoTasks("etorion");
-
-  t.etorionsLeft = clamp((t.etorionsLeft ?? t.etorionsTotal ?? 1) - 1, 0, 99);
+  pushUndo("etorion");
+  t.etorionsLeft = clamp((t.etorionsLeft??t.etorionsTotal??1)-1, 0, 99);
   state.stats.etorionsDone = (state.stats.etorionsDone||0) + 1;
 
   if(t.etorionsLeft<=0){
@@ -1974,62 +1449,64 @@ function degommeEtorion(){
   saveState();
   renderAll();
 }
-
-function completeTask(taskId){
-  const t = getTaskById(taskId);
+function completeTask(id){
+  const t = getTask(id);
   if(!t || t.done) return;
-
-  pushUndoTasks("taskComplete");
-
-  t.done = true;
-  t.doneAt = nowISO();
+  pushUndo("complete");
+  t.done=true; t.doneAt=nowISO();
   state.stats.tasksDone = (state.stats.tasksDone||0) + 1;
 
-  // petite fête
-  confettiBurst(1.10);
+  confettiBurst(1.1);
 
   ensureCurrentTask();
   saveState();
   renderAll();
 
-  // big fiesta si tout est fini
   if(activeTasks().length===0 && state.baseline.totalTasks>0){
-    showVictory();
+    bigFiesta();
   }
 }
-
-function deleteTask(taskId){
-  const t = getTaskById(taskId);
+function deleteTask(id){
+  const t = getTask(id);
   if(!t) return;
-  pushUndoTasks("deleteTask");
-  state.tasks = state.tasks.filter(x=>x.id!==taskId);
+  pushUndo("delete");
+  state.tasks = state.tasks.filter(x=>x.id!==id);
+  ensureBaseline(true);
   ensureCurrentTask();
-  // baseline: on ne “triche” pas => si on supprime, on recalcule baseline sur actifs
-  recomputeBaselineIfNeeded(true);
   saveState();
   renderAll();
 }
 
-/* =========================================================
-   FOCUS MODE — garde l’essentiel + pomodoro visible
-   ========================================================= */
-function toggleFocus(){
-  state.focus = !state.focus;
+/* ============================================================
+  TIMER global (simple)
+============================================================ */
+function timerNowMs(){
+  if(!state.timer.startedAt) return 0;
+  const now = Date.now();
+  const paused = state.timer.pausedTotal || 0;
+  const extraPaused = state.timer.pausedAt ? (now - state.timer.pausedAt) : 0;
+  return Math.max(0, now - state.timer.startedAt - paused - extraPaused);
+}
+function toggleGlobalPause(){
+  if(!state.timer.startedAt) state.timer.startedAt = Date.now();
+  if(state.timer.pausedAt){
+    state.timer.pausedTotal = (state.timer.pausedTotal||0) + (Date.now()-state.timer.pausedAt);
+    state.timer.pausedAt = null;
+  }else{
+    state.timer.pausedAt = Date.now();
+  }
   saveState();
-  renderAll();
 }
 
-/* =========================================================
-   POMODORO — intégré sous la barre (dans la même carte)
-   Start -> Pause (quand en route), Stop général
-   ========================================================= */
+/* ============================================================
+  POMODORO (intégré sous la barre)
+============================================================ */
 function pomodoroLeftMs(){
   if(!state.pomodoro.running) return null;
   if(state.pomodoro.paused && typeof state.pomodoro.pausedLeftMs==="number") return state.pomodoro.pausedLeftMs;
   if(!state.pomodoro.endsAt) return null;
   return Math.max(0, state.pomodoro.endsAt - Date.now());
 }
-
 function pomodoroStart(){
   const min = clamp(parseInt(state.pomodoro.minutes,10)||25, 5, 90);
   state.pomodoro.minutes = min;
@@ -2043,12 +1520,10 @@ function pomodoroStart(){
 function pomodoroPauseToggle(){
   if(!state.pomodoro.running) return;
   if(!state.pomodoro.paused){
-    // pause
     state.pomodoro.paused = true;
     state.pomodoro.pausedLeftMs = pomodoroLeftMs() ?? (state.pomodoro.minutes*60*1000);
     state.pomodoro.endsAt = null;
   }else{
-    // resume
     state.pomodoro.paused = false;
     const left = clamp(state.pomodoro.pausedLeftMs||0, 0, 90*60*1000);
     state.pomodoro.endsAt = Date.now() + left;
@@ -2058,54 +1533,56 @@ function pomodoroPauseToggle(){
   renderPomodoro();
 }
 function pomodoroStop(){
-  state.pomodoro.running = false;
-  state.pomodoro.paused = false;
-  state.pomodoro.endsAt = null;
-  state.pomodoro.pausedLeftMs = null;
+  state.pomodoro.running=false;
+  state.pomodoro.paused=false;
+  state.pomodoro.endsAt=null;
+  state.pomodoro.pausedLeftMs=null;
   saveState();
   renderPomodoro();
 }
 
-function formatMMSS(ms){
-  const s = Math.floor(ms/1000);
-  const mm = String(Math.floor(s/60)).padStart(2,"0");
-  const ss = String(s%60).padStart(2,"0");
-  return `${mm}:${ss}`;
+function renderPomodoro(){
+  const timeEl = $("pomoTime");
+  const hintEl = $("pomoHint");
+  const btnStart = $("btnPomoStart");
+  const btnStop  = $("btnPomoStop");
+  const btnToggle= $("btnPomoToggle");
+
+  if(btnToggle) btnToggle.textContent = state.pomodoro.visible ? "masquer" : "afficher";
+  if(!state.ui.showPomodoro){
+    if(timeEl) timeEl.textContent = "";
+    if(hintEl) hintEl.textContent = "";
+    return;
+  }
+  // visible toggle affects only row; Part 1 should hide via CSS class if you have it. Here we just dim.
+  const row = $("pomoClickZone")?.closest(".pomoRow");
+  if(row) row.style.display = state.pomodoro.visible ? "" : "none";
+
+  const left = pomodoroLeftMs();
+  if(!state.pomodoro.running){
+    if(timeEl) timeEl.textContent = `${String(state.pomodoro.minutes).padStart(2,"0")}:00`;
+    if(hintEl) hintEl.textContent = "pomodoro prêt";
+    if(btnStart) btnStart.textContent = "start";
+    if(btnStop) btnStop.style.display = "none";
+  }else{
+    if(timeEl) timeEl.textContent = formatMMSS(left||0);
+    if(hintEl) hintEl.textContent = state.pomodoro.paused ? "pomodoro (pause)" : "pomodoro (en cours)";
+    if(btnStart) btnStart.textContent = state.pomodoro.paused ? "reprendre" : "pause";
+    if(btnStop) btnStop.style.display = "";
+  }
 }
 
-/* =========================================================
-   VICTORY MODAL — auto-glorification absurde, conquérant
-   ========================================================= */
-const VICTORY_LINES = [
-  "Mission accomplie. Le royaume du chaos signe l’armistice.",
-  "Tu as conquis la forteresse des obligations. Bannière plantée.",
-  "Les dragons administratifs sont retournés dans leurs dossiers.",
-  "Ton nom sera gravé sur la Tablette du Flow. En lettres très propres.",
-  "La réalité a plié le genou. Tu peux marcher en silence triomphal."
-];
-
-function showVictory(){
-  const title = $("victoryTitle");
-  const msg = $("victoryMsg");
-  if(title) title.textContent = "Victoire totale";
-  if(msg) msg.textContent = VICTORY_LINES[Math.floor(Math.random()*VICTORY_LINES.length)];
-
-  // confetti plus fort
-  confettiBurst(1.8);
-  openModal("victoryModal");
-}
-
-/* =========================================================
-   TAGLINES — moins niais, mégalo drôle, conquérant
-   ========================================================= */
+/* ============================================================
+  TAGLINES: conquérant, fin, pas niais
+============================================================ */
 const TAGLINES = [
-  "Tu avances. Le monde s’aligne. Le chaos s’excuse.",
   "Un pas. Une coupe nette. Rien ne discute.",
+  "Le chaos signe. Tu avances.",
   "L’armée des “plus tard” recule. Tu prends le terrain.",
-  "Ton flow est une loi physique. Les tâches obéissent.",
-  "Aujourd’hui, tu n’es pas pressé: tu es inévitable."
+  "Aujourd’hui: calme, précis, implacable.",
+  "Ton royaume n’a pas demandé à être conquis. Tant pis."
 ];
-function setRandomTagline(){
+function maybeNewTagline(){
   if(!state.ui.showTagline) return;
   const el = $("tagline");
   if(!el) return;
@@ -2114,118 +1591,53 @@ function setRandomTagline(){
   }
 }
 
-/* =========================================================
-   RENDER — main UI (barre + tâche + liste en cours + top info)
-   ========================================================= */
-function renderTop(){
-  // labels mode/palette déjà gérés en applyTheme (Part 2)
-  // counters
-  const p = computeProgress();
-  if($("countTasks")) $("countTasks").textContent = `${p.remT}/${p.baseT}`;
-  if($("countEto")) $("countEto").textContent = `${p.remE}/${p.baseE}`;
-  if($("countDone")) $("countDone").textContent = `${(p.baseT - p.remT)}`;
-}
-
-function renderProgress(){
-  recomputeBaselineIfNeeded(false);
-  const p = computeProgress();
-
-  const fill = $("taskBarFill");
-  const pct = $("taskBarPct"); // tu peux le masquer via CSS si tu veux
-  if(fill) fill.style.width = `${p.pct}%`;
-  if(pct) pct.textContent = `${p.pct}%`;
-
-  // hauteur “vraiment” appliquée: dépend du CSS de Part 1
-  // Ici on ne fait que la logique.
-}
-
-function renderCurrentTask(){
-  ensureCurrentTask();
-  const t = getTaskById(state.currentTaskId);
-
-  const name = $("taskName");
-  const chips = $("chips");
-  const btnE = $("btnEtorion");
-
-  if(!t){
-    if(name) name.textContent = "Aucune tâche";
-    if(chips) chips.innerHTML = "";
-    if(btnE){ btnE.disabled = true; btnE.classList.add("disabled"); }
-    return;
-  }
-
-  if(name) name.textContent = t.title;
-
-  const total = t.etorionsTotal || 1;
-  const left = (typeof t.etorionsLeft==="number") ? t.etorionsLeft : total;
-
-  if(chips){
-    let html = "";
-    for(let i=0;i<total;i++){
-      html += `<span class="chip ${i<left ? "on" : ""}"></span>`;
-    }
-    chips.innerHTML = html;
-  }
-
-  if(btnE){ btnE.disabled = false; btnE.classList.remove("disabled"); }
-}
-
-function selectedCats(){
-  const allCats = Array.from(new Set(state.tasks.map(t=>t.cat||"Inbox")));
-  if(!state.filters.activeCats || state.filters.activeCats.length===0) return allCats;
-  return state.filters.activeCats;
-}
-
-function filteredActiveTasks(){
-  const cats = selectedCats();
-  return activeTasks().filter(t=>cats.includes(t.cat||"Inbox"));
-}
-
+/* ============================================================
+  BELOW LIST (liste en cours sous la zone centrale)
+============================================================ */
 function renderBelowList(){
-  const box = $("belowTasks");
-  if(!box) return;
+  const box = $("belowRows");
+  const wrap = $("belowList");
+  if(!box || !wrap) return;
 
-  const list = sortTasks(filteredActiveTasks());
+  wrap.classList.toggle("show", !!state.ui.showBelowList);
+
+  const list = sortTasks(activeTasks());
   if(list.length===0){
-    box.innerHTML = `<div class="small">Aucune tâche dans les catégories sélectionnées.</div>`;
+    box.innerHTML = `<div class="muted">Aucune tâche.</div>`;
     return;
   }
 
-  // Outils minimalistes, mais lisibles: mots courts (pas symboles “flous”)
   box.innerHTML = list.slice(0,80).map(t=>{
     const et = t.etorionsTotal||1;
     const left = t.etorionsLeft ?? et;
     const cur = (t.id===state.currentTaskId);
-
     return `
-      <div class="taskRow ${cur?"isCurrent":""}">
-        <div class="t">${escapeHTML(t.title)}</div>
-        <div class="meta">${left}/${et}</div>
+      <div class="listRow ${cur?"isCurrent":""}">
+        <div class="t" title="${escapeHTML(t.title)}">${escapeHTML(t.title)}</div>
+        <div class="m">${left}/${et}</div>
         <div class="tools">
-          <button class="toolBtn" data-act="pin" data-id="${t.id}" title="Prioriser">${t.pinned?"priorité":"prioriser"}</button>
-          <button class="toolBtn" data-act="go" data-id="${t.id}" title="Cibler">cibler</button>
-          <button class="toolBtn" data-act="edit" data-id="${t.id}" title="Éditer">éditer</button>
-          <button class="toolBtn" data-act="done" data-id="${t.id}" title="Finir">finir</button>
-          <button class="toolBtn" data-act="del" data-id="${t.id}" title="Supprimer">supprimer</button>
+          <div class="tool" data-act="pin" data-id="${t.id}" title="prioriser">${t.pinned ? "prio" : "prio"}</div>
+          <div class="tool" data-act="go"  data-id="${t.id}" title="cibler">go</div>
+          <div class="tool" data-act="edit"data-id="${t.id}" title="éditer">edit</div>
+          <div class="tool" data-act="done"data-id="${t.id}" title="finir">fin</div>
+          <div class="tool" data-act="del" data-id="${t.id}" title="supprimer">x</div>
         </div>
       </div>
     `;
   }).join("");
 
-  $$(".toolBtn", box).forEach(b=>{
+  $$(".tool", box).forEach(b=>{
     b.onclick = ()=>{
       const id = b.getAttribute("data-id");
       const act = b.getAttribute("data-act");
-      const t = getTaskById(id);
+      const t = getTask(id);
       if(!t) return;
 
-      pushUndoTasks("listAction");
-
-      if(act==="pin") t.pinned = !t.pinned;
-      if(act==="go") setCurrentTask(id);
-      if(act==="done") completeTask(id);
-      if(act==="del") deleteTask(id);
-      if(act==="edit") openTaskEditor(id);
+      if(act==="pin"){ pushUndo("pin"); t.pinned=!t.pinned; }
+      if(act==="go"){ state.currentTaskId=id; }
+      if(act==="done"){ completeTask(id); return; }
+      if(act==="del"){ deleteTask(id); return; }
+      if(act==="edit"){ openTaskEditor(id); return; }
 
       saveState();
       renderAll();
@@ -2233,42 +1645,39 @@ function renderBelowList(){
   });
 }
 
-/* =========================================================
-   TASK EDITOR (modal simple)
-   ========================================================= */
-function openTaskEditor(taskId){
-  const t = getTaskById(taskId);
+/* ============================================================
+  TASK EDIT MODAL
+============================================================ */
+function openTaskEditor(id){
+  const t = getTask(id);
   if(!t) return;
+  const host = $("taskEditBody");
+  if(!host) return;
 
-  const body = $("taskEditBody");
-  if(!body) return;
-
-  body.innerHTML = `
+  host.innerHTML = `
     <div class="section">
-      <h3>Modifier tâche</h3>
+      <h3>Modifier</h3>
       <div class="row">
         <input id="teTitle" value="${escapeHTML(t.title)}" placeholder="Titre">
-        <input id="teCat" value="${escapeHTML(t.cat||"")}" placeholder="Catégorie">
+        <input id="teCat" value="${escapeHTML(t.cat||"Inbox")}" placeholder="Catégorie">
       </div>
       <div class="row">
         <input id="teTotal" type="number" min="1" max="99" step="1" value="${t.etorionsTotal||1}">
         <input id="teLeft" type="number" min="0" max="99" step="1" value="${t.etorionsLeft ?? (t.etorionsTotal||1)}">
       </div>
       <div class="row">
-        <button class="btn primary" id="teSave">enregistrer</button>
+        <button class="btn" id="teSave">enregistrer</button>
         <button class="btn" id="teCancel">annuler</button>
       </div>
     </div>
   `;
 
   $("teSave").onclick = ()=>{
-    pushUndoTasks("taskEdit");
-    t.title = $("teTitle").value.trim() || t.title;
-    t.cat = $("teCat").value.trim() || t.cat;
+    pushUndo("edit");
+    t.title = ($("teTitle").value||"").trim() || t.title;
+    t.cat   = ($("teCat").value||"").trim()   || t.cat;
     t.etorionsTotal = clamp(parseInt($("teTotal").value,10)||1, 1, 99);
-    t.etorionsLeft = clamp(parseInt($("teLeft").value,10)||t.etorionsTotal, 0, 99);
-
-    // baseline: si on augmente trop, on ne triche pas => option: baseline stays same.
+    t.etorionsLeft  = clamp(parseInt($("teLeft").value,10)||t.etorionsTotal, 0, 99);
     saveState();
     closeModal("taskEditModal");
     renderAll();
@@ -2278,513 +1687,180 @@ function openTaskEditor(taskId){
   openModal("taskEditModal");
 }
 
-/* =========================================================
-   KIFFANCE QUICK PICK (surprise)
-   ========================================================= */
+/* ============================================================
+  FOCUS MODE (overlay)
+============================================================ */
+function enterFocus(){
+  state.ui.focus = true;
+  saveState();
+  renderAll();
+}
+function exitFocus(){
+  state.ui.focus = false;
+  saveState();
+  renderAll();
+}
+function renderFocus(){
+  const ov = $("focusOverlay");
+  if(!ov) return;
+  ov.style.display = state.ui.focus ? "block" : "none";
+
+  const p = computeProgress();
+  if($("fBarFill")) $("fBarFill").style.width = `${p.pct}%`;
+  if($("fBarPct"))  $("fBarPct").textContent = `${p.pct}%`;
+
+  const t = getTask(state.currentTaskId);
+  if($("fTaskName")) $("fTaskName").textContent = t ? t.title : "Aucune tâche";
+
+  if($("fChips")){
+    if(!t){ $("fChips").innerHTML=""; }
+    else{
+      const total=t.etorionsTotal||1;
+      const left=t.etorionsLeft ?? total;
+      $("fChips").innerHTML = Array.from({length:total},(_,i)=>`<span class="chip ${i<left?"on":""}"></span>`).join("");
+    }
+  }
+
+  // pomodoro mirror
+  if($("fPomoTime")){
+    const left = pomodoroLeftMs();
+    if(!state.pomodoro.running) $("fPomoTime").textContent = `${String(state.pomodoro.minutes).padStart(2,"0")}:00`;
+    else $("fPomoTime").textContent = formatMMSS(left||0);
+  }
+  if($("fPomoHint")){
+    if(!state.pomodoro.running) $("fPomoHint").textContent="pomodoro";
+    else $("fPomoHint").textContent = state.pomodoro.paused ? "pomodoro (pause)" : "pomodoro";
+  }
+  if($("fPomoStart")){
+    if(!state.pomodoro.running) $("fPomoStart").textContent="start";
+    else $("fPomoStart").textContent = state.pomodoro.paused ? "reprendre" : "pause";
+  }
+  if($("fPomoStop")){
+    $("fPomoStop").style.display = state.pomodoro.running ? "" : "none";
+  }
+}
+
+/* ============================================================
+  KIFFANCE (surprise)
+============================================================ */
+function seedKiffanceIfEmpty(){
+  const b = state.kiffance.bank;
+  const empty = ["5","10","15","25"].every(k=>Array.isArray(b[k]) && b[k].length===0);
+  if(!empty) return;
+
+  b["5"] = [
+    "Respire 5 cycles. Mâchoire déverrouillée. Tu reviens en mode ninja calme.",
+    "Bois de l’eau comme un druide qui connaît l’avenir. Une gorgée = un sort.",
+    "Étire nuque/épaules 60 secondes. Déplie tes ailes invisibles.",
+    "Marche 45 secondes comme un héros de JRPG. Oui, même dans le couloir.",
+    "Regarde dehors 30 secondes. Le monde existe encore. Étonnant."
+  ];
+  b["10"] = [
+    "Reset noble: eau + fenêtre 2 min + retour.",
+    "Mini-rangement 6 min. Tu purifies une zone. Le chaos recule.",
+    "Marche 8 min sans écran. Reviens avec une seule intention.",
+    "Snack simple. Aucun scroll. Tu es un moine guerrier."
+  ];
+  b["15"] = [
+    "Respiration 4-6 (4 min) + étirements (8 min) + retour (3 min).",
+    "Musique douce + rangement 12 min + 3 min reprise lente.",
+    "Douche rapide (ou nuque/visage) + retour propre."
+  ];
+  b["25"] = [
+    "Pause ‘Ghibli’: thé, lumière, silence 20 min + 5 min reprise.",
+    "Micro-sieste 15–20 min + eau + reprise.",
+    "Marche dehors + tu écris UNE priorité en revenant."
+  ];
+  saveState();
+}
+
 function pickKiffance(){
   const enabled = state.kiffance.enabledBuckets.filter(k=>Array.isArray(state.kiffance.bank[k]) && state.kiffance.bank[k].length>0);
-  if(enabled.length===0) return null;
+  if(!enabled.length) return null;
   const bucket = enabled[Math.floor(Math.random()*enabled.length)];
   const arr = state.kiffance.bank[bucket];
   return { bucket, text: arr[Math.floor(Math.random()*arr.length)] };
 }
+
 function showKiffance(){
   const pick = pickKiffance();
   if(!pick){
-    const t = $("kiffTitle"), m = $("kiffMsg");
-    if(t) t.textContent = "Kiffance";
-    if(m) m.textContent = "Banque vide. Ajoute des kiffances dans le menu.";
-    openModal("kiffModal");
+    $("celeTitle").textContent = "Kiffance";
+    $("celeMsg").textContent = "Banque vide. Ajoute des kiffances dans le panneau.";
+    $("celeSub").textContent = "";
+    openModal("celeModal");
     return;
   }
   state.kiffance.lastPickAt = Date.now();
   saveState();
 
-  const t = $("kiffTitle"), m = $("kiffMsg"), s = $("kiffSub");
-  if(t) t.textContent = `Kiffance (${pick.bucket} min)`;
-  if(m) m.textContent = pick.text;
-  if(s) s.textContent = "Pause courte, surprise, puis retour au monde.";
-  openModal("kiffModal");
+  $("celeTitle").textContent = `Kiffance (${pick.bucket} min)`;
+  $("celeMsg").textContent = pick.text;
+  $("celeSub").textContent = "Surprise. Respire. Puis retour au royaume.";
+  openModal("celeModal");
 }
 
-/* =========================================================
-   POMODORO RENDER + LOOP
-   ========================================================= */
-let tickInterval = null;
-
-function renderPomodoro(){
-  const wrap = $("pomoWrap");
-  if(!wrap) return;
-
-  const visible = !!state.ui.showPomodoro && !!state.pomodoro.visible;
-  wrap.classList.toggle("hidden", !visible);
-
-  const timeEl = $("pomoTime");
-  const btnA = $("pomoAction");  // start/pause
-  const btnS = $("pomoStop");    // stop
-  const labelEl = $("pomoLabel");
-
-  const left = pomodoroLeftMs();
-
-  if(!state.pomodoro.running){
-    if(timeEl) timeEl.textContent = `${String(state.pomodoro.minutes).padStart(2,"0")}:00`;
-    if(labelEl) labelEl.textContent = "pomodoro";
-    if(btnA) btnA.textContent = "start";
-    if(btnS) btnS.disabled = true;
-  }else{
-    if(timeEl) timeEl.textContent = formatMMSS(left||0);
-    if(labelEl) labelEl.textContent = state.pomodoro.paused ? "pomodoro (pause)" : "pomodoro (en cours)";
-    if(btnA) btnA.textContent = state.pomodoro.paused ? "reprendre" : "pause";
-    if(btnS) btnS.disabled = false;
-  }
-}
-
-function ensureTickLoop(){
-  if(tickInterval) return;
-  tickInterval = setInterval(()=>{
-    // global timer label optional (si tu l’affiches)
-    if(state.ui.showCounters && $("globalTime")){
-      $("globalTime").textContent = formatMMSS(timerNowMs());
-    }
-
-    // pomodoro countdown
-    if(state.pomodoro.running && !state.pomodoro.paused){
-      const left = pomodoroLeftMs();
-      if(left!==null && left<=0){
-        pomodoroStop();
-        renderPomodoro();
-        // petit nudge/kiffance automatique à la fin
-        showKiffance();
-      }else{
-        renderPomodoro();
-      }
-    }
-  }, 500);
-}
-
-/* =========================================================
-   APPLY FOCUS VISUALLY (CSS hooks)
-   ========================================================= */
-function applyFocusUI(){
-  document.body.dataset.focus = state.focus ? "1" : "0";
-}
-
-/* =========================================================
-   MAIN RENDER
-   ========================================================= */
-function renderAll(){
-  applyTheme();          // Part 2
-  applyFocusUI();
-  setRandomTagline();
-
-  ensureCurrentTask();
-  recomputeBaselineIfNeeded(false);
-
-  renderTop();
-  renderProgress();
-  renderCurrentTask();
-  renderBelowList();
-  renderPomodoro();
-
-  // undo enable
-  if($("btnUndo")){
-    const ok = (state.undo||[]).length>0;
-    $("btnUndo").disabled = !ok;
-    $("btnUndo").classList.toggle("disabled", !ok);
-    $("btnUndo").textContent = ok ? "retour" : "retour (vide)";
-  }
-
-  // pause label (pas de symbole)
-  if($("btnPause")){
-    $("btnPause").textContent = state.timer.pausedAt ? "reprendre" : "pause";
-  }
-}
-
-/* =========================================================
-   WIRE MAIN UI EVENTS (si les ids existent dans PARTIE 1)
-   ========================================================= */
-function bindMainEvents(){
-  // roulette simple: pick pinned else random
-  if($("btnRoulette")){
-    $("btnRoulette").onclick = ()=>{
-      const list = sortTasks(activeTasks());
-      if(list.length===0) return;
-      const pinned = list.filter(t=>t.pinned);
-      const pool = pinned.length ? pinned : list;
-      const pick = pool[Math.floor(Math.random()*pool.length)];
-      setCurrentTask(pick.id);
-      renderAll();
-    };
-  }
-
-  if($("btnEtorion")) $("btnEtorion").onclick = degommeEtorion;
-
-  if($("btnUndo")) $("btnUndo").onclick = ()=>undoTasks();
-
-  if($("btnFocus")) $("btnFocus").onclick = ()=>{ toggleFocus(); };
-
-  if($("btnListToggle")){
-    $("btnListToggle").onclick = ()=>{
-      // partie 1 doit contenir belowList + CSS; ici on toggle via dataset
-      const cur = document.body.dataset.showList === "1";
-      document.body.dataset.showList = cur ? "0" : "1";
-    };
-  }
-
-  // pomodoro controls
-  if($("pomoAction")){
-    $("pomoAction").onclick = ()=>{
-      if(!state.pomodoro.running) pomodoroStart();
-      else pomodoroPauseToggle();
-      renderPomodoro();
-    };
-  }
-  if($("pomoStop")){
-    $("pomoStop").onclick = ()=>{
-      pomodoroStop();
-      renderPomodoro();
-    };
-  }
-  // click time => adjust minutes (simple prompt, sans interface lourde)
-  if($("pomoTime")){
-    $("pomoTime").onclick = ()=>{
-      const v = prompt("Durée pomodoro (minutes, 5 à 90) :", String(state.pomodoro.minutes||25));
-      if(v===null) return;
-      const n = clamp(parseInt(v,10)||25, 5, 90);
-      state.pomodoro.minutes = n;
-      // si pas en cours, reflète direct
-      if(!state.pomodoro.running) renderPomodoro();
-      saveState();
-    };
-  }
-
-  // kiffance quick
-  if($("btnKiffance")) $("btnKiffance").onclick = showKiffance;
-
-  // import inbox (si textarea + btn existent dans drawer gauche)
-  if($("inboxImportBtn") && $("inboxText")){
-    $("inboxImportBtn").onclick = ()=>{
-      const items = importFromInbox($("inboxText").value||"");
-      if(items.length===0) return;
-      pushUndoTasks("import");
-      state.tasks.push(...items);
-      // baseline reset à l’import
-      recomputeBaselineIfNeeded(true);
-      ensureCurrentTask();
-      $("inboxText").value = "";
-      saveState();
-      renderAll();
-    };
-  }
-
-  // reset baseline
-  if($("baselineResetBtn")){
-    $("baselineResetBtn").onclick = ()=>{
-      pushUndoTasks("resetBaseline");
-      recomputeBaselineIfNeeded(true);
-      saveState();
-      renderAll();
-    };
-  }
-
-  // clear done
-  if($("clearDoneBtn")){
-    $("clearDoneBtn").onclick = ()=>{
-      pushUndoTasks("clearDone");
-      state.tasks = state.tasks.filter(t=>!t.done);
-      recomputeBaselineIfNeeded(true);
-      ensureCurrentTask();
-      saveState();
-      renderAll();
-    };
-  }
-
-  // wipe all
-  if($("wipeAllBtn")){
-    $("wipeAllBtn").onclick = ()=>{
-      if(!confirm("Tout effacer ?")) return;
-      pushUndoTasks("wipeAll");
-      state.tasks = [];
-      state.baseline = { totalTasks:0, totalEtorions:0 };
-      state.currentTaskId = null;
-      state.stats.tasksDone = 0;
-      state.stats.etorionsDone = 0;
-      saveState();
-      renderAll();
-    };
-  }
-
-  // notes modal open
-  if($("btnNotes") && $("notesModal")) $("btnNotes").onclick = ()=>openModal("notesModal");
-
-  // task edit open (current)
-  if($("btnEditTask")){
-    $("btnEditTask").onclick = ()=>{
-      const t = getTaskById(state.currentTaskId);
-      if(!t) return;
-      openTaskEditor(t.id);
-    };
-  }
-
-  // close modals buttons (optional)
-  if($("victoryClose")) $("victoryClose").onclick = ()=>closeModal("victoryModal");
-  if($("kiffClose")) $("kiffClose").onclick = ()=>closeModal("kiffModal");
-
-  // keyboard: space => global pause (sans symboles)
-  document.addEventListener("keydown",(e)=>{
-    const tag = (document.activeElement && document.activeElement.tagName || "").toLowerCase();
-    if(e.code==="Space" && !["input","textarea","select"].includes(tag)){
-      e.preventDefault();
-      toggleGlobalPause();
-      renderAll();
-    }
-  });
-}
-
-/* =========================================================
-   BOOT PART 3
-   ========================================================= */
-(function bootPart3(){
-  // ensure baseline if tasks exist
-  recomputeBaselineIfNeeded(false);
-  ensureCurrentTask();
-
-  bindMainEvents();
-  ensureTickLoop();
-  renderAll();
-})();
-</script>
-<!-- =========================
-PARTIE 4/4 — JS (sets alignés + habitudes + humeur TCC + calendrier mois + stats + préférences/apply + export texte)
-À coller APRÈS la PARTIE 3/4.
-Cette partie termine le HTML (</body></html>) si tu l’avais laissé ouvert.
-Aucun symbole “flou” ajouté à la fin : uniquement du code.
-========================= -->
-<script>
-/* -------------------------
-  ELIMINATOR — expansion v1.26
-  Part 4/4: right panel (sets/habits/mood), calendar, stats, preferences/apply, export text, categories filter
-------------------------- */
-
-/* =========================================================
-   STATE EXTENSIONS
-   ========================================================= */
-state.sets = state.sets || { list: [], selectedId: null };
-state.habits = Array.isArray(state.habits) ? state.habits : [];
-state.mood = state.mood || { entries: [] };
-state.planner = state.planner || { items: [] }; // {id, day:"YYYY-MM-DD", title, minutes, createdAt}
-state.statsView = state.statsView || { range: "7d" }; // "2h" | "1d" | "7d" | "30d"
-state.prefsDraft = state.prefsDraft || null;
-
-/* =========================================================
-   UTILS
-   ========================================================= */
-function dk(d=new Date()){
-  const y=d.getFullYear();
-  const m=String(d.getMonth()+1).padStart(2,"0");
-  const da=String(d.getDate()).padStart(2,"0");
-  return `${y}-${m}-${da}`;
-}
-function addDays(date, n){
-  const d = new Date(date.getTime());
-  d.setDate(d.getDate()+n);
-  return d;
-}
-function monthKey(d=new Date()){
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
-}
-function sameDayISO(a,b){ return String(a||"").slice(0,10) === String(b||"").slice(0,10); }
-
-/* =========================================================
-   SEED SETS (2 par défaut: Set 1 / Set 2, alignés)
-   ========================================================= */
-(function seedSets(){
-  if(!state.sets || !Array.isArray(state.sets.list)) state.sets = { list:[], selectedId:null };
-  if(state.sets.list.length>0) return;
-
-  const mk = (title, unitName, unitCount, items)=>({
-    id: uid(),
-    title,
-    unitName,
-    unitCount,
-    items,
-    checks: {},       // dayKey -> { "u0_i0": true }
-    order: Date.now()+Math.random()
-  });
-
-  state.sets.list = [
-    mk("Set 1", "Patient", 4, ["Voir", "Note", "Traitement", "Dossier"]),
-    mk("Set 2", "Patient", 6, ["Voir", "Note", "Ordonnance", "Dossier"])
-  ];
-  state.sets.selectedId = state.sets.list[0].id;
-  saveState();
-})();
-
-function getSetById(id){ return state.sets.list.find(s=>s.id===id) || null; }
-function ensureSelectedSet(){
-  if(state.sets.list.length===0){ state.sets.selectedId=null; return; }
-  if(!state.sets.selectedId || !getSetById(state.sets.selectedId)){
-    state.sets.selectedId = state.sets.list[0].id;
-  }
-}
-function setCheckKey(u,i){ return `u${u}_i${i}`; }
-function initSetDay(set, day=dk()){
-  set.checks = set.checks || {};
-  if(!set.checks[day]) set.checks[day] = {};
-}
-function toggleSetCheck(setId, u, i, day=dk()){
-  const set = getSetById(setId); if(!set) return;
-  initSetDay(set, day);
-  const k = setCheckKey(u,i);
-  set.checks[day][k] = !set.checks[day][k];
-}
-function setDaySummary(setId, day=dk()){
-  const set = getSetById(setId); if(!set) return {done:0,total:0};
-  initSetDay(set, day);
-  const total = (set.unitCount||0) * (set.items?.length||0);
-  const done = Object.values(set.checks[day]||{}).filter(Boolean).length;
-  return {done,total};
-}
-
-/* =========================================================
-   HABITS — seed suggestions + simple progress
-   ========================================================= */
-(function seedHabits(){
-  if(state.habits.length>0) return;
-  state.habits = [
-    { id: uid(), name:"Eau", slots: 8, checks: Array.from({length:8},()=>false), createdAt: nowISO() },
-    { id: uid(), name:"Marche", slots: 4, checks: Array.from({length:4},()=>false), createdAt: nowISO() },
-    { id: uid(), name:"Lecture", slots: 3, checks: Array.from({length:3},()=>false), createdAt: nowISO() }
-  ];
-  saveState();
-})();
-function habitProgress(h){
-  const done = (h.checks||[]).filter(Boolean).length;
-  const tot = (h.checks||[]).length || 0;
-  return { done, tot, pct: tot? Math.round(done/tot*100):0 };
-}
-function toggleHabitCheck(hId, idx){
-  const h = state.habits.find(x=>x.id===hId);
-  if(!h || !Array.isArray(h.checks)) return;
-  if(idx<0 || idx>=h.checks.length) return;
-  h.checks[idx] = !h.checks[idx];
-}
-
-/* =========================================================
-   MOOD TCC — click-based (peu de texte)
-   Entries: {id, day, at, emotion, intensity, thought, distortion, need, action, note}
-   ========================================================= */
-const EMOS = ["Joie","Calme","Stress","Anxiété","Tristesse","Colère","Honte","Culpabilité","Fatigue","Frustration","Solitude","Irritabilité","Peur","Soulagement"];
-const DIST = [
-  {k:"Tout ou rien", tip:"Cherche un ‘entre-deux’ mesurable."},
-  {k:"Catastrophisme", tip:"Échelle 0–100: probabilité réelle ?"},
-  {k:"Lecture de pensée", tip:"Quelle preuve ? Quelle alternative ?"},
-  {k:"Doit/Il faut", tip:"Transforme en préférence flexible."},
-  {k:"Filtre négatif", tip:"Note 2 faits neutres/positifs."},
-  {k:"Étiquetage", tip:"Décris un comportement, pas ton identité."},
-  {k:"Raisonnement émotionnel", tip:"Sentir ≠ prouver."},
-  {k:"Surgénéralisation", tip:"‘Cette fois’ plutôt que ‘toujours’."}
+/* ============================================================
+  BIG FIESTA + auto-gratification
+============================================================ */
+const GLORY = [
+  "GLORIEUX. Tu as plié la réalité en origami.",
+  "Victoire totale. Les tâches ont fui en silence.",
+  "Le chaos a signé. Tu es officiellement inévitable.",
+  "Le conseil des anciens valide: tu es une machine élégante.",
+  "Ton empire administratif est désormais pacifié."
 ];
-const NEEDS = ["Repos","Sécurité","Clarté","Lien","Autonomie","Compétence","Reconnaissance","Protection","Sens"];
-const ACTIONS = [
-  "Respiration 4-6 (2 min)",
-  "Ancrage 5-4-3-2-1 (1 min)",
-  "Micro-marche (3 min)",
-  "Hydratation + posture (1 min)",
-  "Action opposée (30 s)",
-  "Écrire 3 lignes: faits / pensée / alternative"
-];
+function bigFiesta(){
+  confettiBurst(1.9);
+  $("celeTitle").textContent = "Mission totale";
+  $("celeMsg").textContent = GLORY[Math.floor(Math.random()*GLORY.length)];
+  $("celeSub").textContent = "Clique pour fermer. Savoure 3 secondes. Oui, c’est un ordre.";
+  openModal("celeModal");
+}
 
-// mapping “émotion → suggestions”
-const EMO_MAP = {
-  "Anxiété": {
-    thoughts:["Je vais rater","Ça va déraper","Je ne vais pas y arriver","Je dois contrôler"],
-    distortions:["Catastrophisme","Lecture de pensée","Doit/Il faut","Raisonnement émotionnel"],
-    needs:["Sécurité","Clarté","Contrôle","Repos"],
-    actions:["Respiration 4-6 (2 min)","Ancrage 5-4-3-2-1 (1 min)","Écrire 3 lignes: faits / pensée / alternative"]
-  },
-  "Stress": {
-    thoughts:["Trop à faire","Je suis en retard","Je n’ai pas le temps","Je dois aller vite"],
-    distortions:["Tout ou rien","Doit/Il faut","Filtre négatif"],
-    needs:["Clarté","Repos","Autonomie"],
-    actions:["Hydratation + posture (1 min)","Action opposée (30 s)","Micro-marche (3 min)"]
-  },
-  "Tristesse": {
-    thoughts:["Ça ne sert à rien","Je suis seul","Je n’y arrive pas"],
-    distortions:["Filtre négatif","Étiquetage","Surgénéralisation"],
-    needs:["Lien","Sens","Reconnaissance","Repos"],
-    actions:["Micro-marche (3 min)","Écrire 3 lignes: faits / pensée / alternative","Respiration 4-6 (2 min)"]
-  },
-  "Colère": {
-    thoughts:["C’est injuste","On abuse","Je dois réagir","Je ne supporte pas"],
-    distortions:["Doit/Il faut","Tout ou rien","Lecture de pensée"],
-    needs:["Protection","Respect","Autonomie"],
-    actions:["Respiration 4-6 (2 min)","Hydratation + posture (1 min)","Écrire 3 lignes: faits / pensée / alternative"]
-  },
-  "Honte": {
-    thoughts:["Je suis nul","On va me juger","Je ne mérite pas"],
-    distortions:["Étiquetage","Lecture de pensée","Disqualification du positif"],
-    needs:["Reconnaissance","Sécurité","Lien"],
-    actions:["Ancrage 5-4-3-2-1 (1 min)","Écrire 3 lignes: faits / pensée / alternative"]
-  },
-  "Fatigue": {
-    thoughts:["Je n’ai plus rien","Je suis vidé","Je ne peux pas"],
-    distortions:["Tout ou rien","Filtre négatif"],
-    needs:["Repos","Protection","Clarté"],
-    actions:["Hydratation + posture (1 min)","Micro-marche (3 min)"]
+/* ============================================================
+  NOTES
+============================================================ */
+function renderNotes(){
+  const host = $("notesList");
+  if(!host) return;
+  if(!state.notes.length){
+    host.innerHTML = `<div class="muted">Aucune note.</div>`;
+    return;
   }
-};
-
-function moodToday(day=dk()){
-  return (state.mood.entries||[]).filter(e=>e.day===day);
+  host.innerHTML = state.notes.slice(0,40).map(n=>{
+    return `<div class="listRow"><div class="t">${escapeHTML(n.text)}</div><div class="m">${escapeHTML(n.at.slice(0,16).replace("T"," "))}</div></div>`;
+  }).join("");
 }
-function moodAdd(entry){
-  state.mood.entries.unshift(entry);
-}
-
-/* =========================================================
-   CALENDAR (mois) + planning simple
-   ========================================================= */
-function planAdd(day, title, minutes=10){
-  const t = String(title||"").trim();
+function addNote(text){
+  const t = String(text||"").trim();
   if(!t) return;
-  state.planner.items.unshift({
-    id: uid(),
-    day,
-    title: t,
-    minutes: clamp(parseInt(minutes,10)||10, 1, 240),
-    createdAt: nowISO()
-  });
-}
-function planForDay(day){
-  return (state.planner.items||[]).filter(x=>x.day===day);
-}
-function planDelete(id){
-  state.planner.items = (state.planner.items||[]).filter(x=>x.id!==id);
+  state.notes.unshift({ id:uid(), at:nowISO(), text:t });
+  state.notes = state.notes.slice(0,120);
+  saveState();
+  renderNotes();
 }
 
-/* =========================================================
-   EXPORT TEXTE (uniquement)
-   ========================================================= */
-function exportTextReport(){
-  recomputeBaselineIfNeeded(false);
+/* ============================================================
+  EXPORT (texte)
+============================================================ */
+function exportText(){
+  ensureBaseline(false);
   const p = computeProgress();
   const done = p.baseT - p.remT;
 
   const lines = [];
   lines.push("ELIMINATOR — export texte");
-  lines.push(`Date: ${dk()}`);
-  lines.push(`Tâches: ${done} faites / ${p.baseT} total (reste ${p.remT})`);
-  lines.push(`Étorions: ${state.stats.etorionsDone||0} faits / ${p.baseE} baseline (reste ${p.remE})`);
+  lines.push(`Date: ${dayKey()}`);
+  lines.push(`Tâches: ${done}/${p.baseT} (reste ${p.remT})`);
+  lines.push(`Étorions: ${state.stats.etorionsDone||0}/${p.baseE} (reste ${p.remE})`);
+  lines.push(`Chrono: ${formatMMSS(timerNowMs())}`);
   lines.push("");
 
-  // Actives groupées par catégorie
   const act = sortTasks(activeTasks());
   const byCat = {};
-  act.forEach(t=>{
-    const c = (t.cat||"Inbox").trim() || "Inbox";
-    (byCat[c] ||= []).push(t);
-  });
+  act.forEach(t=>{ (byCat[t.cat||"Inbox"] ||= []).push(t); });
+
   Object.keys(byCat).sort().forEach(cat=>{
     lines.push(cat);
     byCat[cat].forEach(t=>{
@@ -2795,238 +1871,150 @@ function exportTextReport(){
     lines.push("");
   });
 
-  // Done (dernier 25)
   const doneList = doneTasks().slice().sort((a,b)=>String(b.doneAt||"").localeCompare(String(a.doneAt||""))).slice(0,25);
   if(doneList.length){
-    lines.push("Finies (dernier 25)");
+    lines.push("Finies (25 dernières)");
     doneList.forEach(t=>lines.push(`- ${t.title}`));
-    lines.push("");
   }
-
-  // Temps
-  lines.push(`Temps actif (chronomètre): ${formatMMSS(timerNowMs())}`);
-  if(state.pomodoro.running){
-    lines.push(`Pomodoro: en cours (${formatMMSS(pomodoroLeftMs()||0)} restantes)`);
-  }else{
-    lines.push(`Pomodoro: inactif (${state.pomodoro.minutes||25} min)`);
-  }
-  lines.push("");
-
-  // Mood (aujourd’hui)
-  const mt = moodToday();
-  if(mt.length){
-    lines.push("Humeur (aujourd’hui)");
-    mt.slice(0,12).forEach(e=>{
-      lines.push(`- ${e.emotion} ${e.intensity}/10 · pensée:${e.thought||"—"} · distorsion:${e.distortion||"—"} · besoin:${e.need||"—"} · action:${e.action||"—"}`);
-    });
-  }
-
   return lines.join("\n");
 }
 
-async function exportCopy(){
-  const txt = exportTextReport();
-  if($("exportOut")) $("exportOut").value = txt;
-  try{
-    await navigator.clipboard.writeText(txt);
-    if($("exportCopyBtn")) $("exportCopyBtn").textContent = "copié";
-    setTimeout(()=>{ if($("exportCopyBtn")) $("exportCopyBtn").textContent="copier"; }, 1200);
-  }catch(e){
-    if($("exportCopyBtn")) $("exportCopyBtn").textContent = "échec";
-    setTimeout(()=>{ if($("exportCopyBtn")) $("exportCopyBtn").textContent="copier"; }, 1200);
-  }
-}
-
-/* =========================================================
-   CATEGORIES FILTER UI (si présent)
-   ========================================================= */
-function allCategories(){
-  const set = new Set(state.tasks.map(t=>(t.cat||"Inbox").trim()||"Inbox"));
-  return Array.from(set).sort((a,b)=>a.localeCompare(b));
-}
-function toggleCatFilter(cat){
-  const arr = state.filters.activeCats || (state.filters.activeCats=[]);
-  const i = arr.indexOf(cat);
-  if(i>=0) arr.splice(i,1);
-  else arr.push(cat);
-  saveState();
-  renderAll();
-  renderDrawerCats();
-}
-function catIsActive(cat){
-  const arr = state.filters.activeCats||[];
-  if(arr.length===0) return true;
-  return arr.includes(cat);
-}
-function renderDrawerCats(){
-  const host = $("catFilterBox");
-  if(!host) return;
-  const cats = allCategories();
-  if(cats.length===0){
-    host.innerHTML = `<div class="small">Aucune catégorie.</div>`;
-    return;
-  }
-  host.innerHTML = cats.map(c=>{
-    const on = catIsActive(c);
-    return `<button class="chipBtn ${on?"on":""}" data-cat="${escapeHTML(c)}">${escapeHTML(c)}</button>`;
-  }).join("");
-  $$(".chipBtn", host).forEach(b=>{
-    b.onclick = ()=>toggleCatFilter(b.getAttribute("data-cat"));
-  });
-}
-
-/* =========================================================
-   RIGHT PANEL RENDER — sets/habits/mood/calendar/stats
-   (minimaliste: peu d'encadrés, liste verticale)
-   ========================================================= */
-function renderRightPanel(){
-  if(!$("rightBody")) return;
-  ensureSelectedSet();
-
-  const tab = (state.ui.rightTab || "sets");
-  if($("rightTabs")){
-    // tabs simples (mots courts)
-    $("rightTabs").innerHTML = `
-      <button class="rTab ${tab==="sets"?"on":""}" data-tab="sets">sets</button>
-      <button class="rTab ${tab==="habits"?"on":""}" data-tab="habits">habitudes</button>
-      <button class="rTab ${tab==="mood"?"on":""}" data-tab="mood">humeur</button>
-      <button class="rTab ${tab==="calendar"?"on":""}" data-tab="calendar">calendrier</button>
-      <button class="rTab ${tab==="stats"?"on":""}" data-tab="stats">stats</button>
-    `;
-    $$(".rTab", $("rightTabs")).forEach(b=>{
-      b.onclick = ()=>{
-        state.ui.rightTab = b.getAttribute("data-tab");
-        saveState();
-        renderRightPanel();
-      };
+/* ============================================================
+  RIGHT PANEL: minimal render (sets/habits/mood/calendar/stats)
+  (Version compacte: on ne refait pas 6000 lignes ici, mais c'est fonctionnel)
+============================================================ */
+function seedSetsHabitsIfEmpty(){
+  if(!Array.isArray(state.sets.list)) state.sets.list=[];
+  if(state.sets.list.length===0){
+    const mk=(title, unitName, unitCount, items)=>({
+      id:uid(), title, unitName, unitCount, items,
+      checks:{}, order:Date.now()+Math.random()
     });
+    state.sets.list = [
+      mk("Set 1","Patient",4,["Voir","Note","Traitement","Dossier"]),
+      mk("Set 2","Patient",6,["Voir","Note","Ordonnance","Dossier"])
+    ];
+    state.sets.selectedId = state.sets.list[0].id;
   }
-
-  const body = $("rightBody");
-  body.innerHTML = "";
-  if(tab==="sets") body.appendChild(viewSets());
-  if(tab==="habits") body.appendChild(viewHabits());
-  if(tab==="mood") body.appendChild(viewMood());
-  if(tab==="calendar") body.appendChild(viewCalendar());
-  if(tab==="stats") body.appendChild(viewStats());
+  if(!Array.isArray(state.habits)) state.habits=[];
+  if(state.habits.length===0){
+    state.habits = [
+      { id:uid(), name:"Eau", slots:8, checks:Array.from({length:8},()=>false), createdAt:nowISO() },
+      { id:uid(), name:"Marche", slots:4, checks:Array.from({length:4},()=>false), createdAt:nowISO() },
+      { id:uid(), name:"Lecture", slots:3, checks:Array.from({length:3},()=>false), createdAt:nowISO() }
+    ];
+  }
+  saveState();
 }
+function getSet(id){ return state.sets.list.find(s=>s.id===id)||null; }
+function ensureSelectedSet(){
+  if(state.sets.list.length===0){ state.sets.selectedId=null; return; }
+  if(!state.sets.selectedId || !getSet(state.sets.selectedId)) state.sets.selectedId = state.sets.list[0].id;
+}
+function initSetDay(set, day=dayKey()){
+  set.checks ||= {};
+  if(!set.checks[day]) set.checks[day]={};
+}
+function setCheckKey(u,i){ return `u${u}_i${i}`; }
 
-/* -------------------------
-   VIEW: SETS (alignés, lignes, pas de cartes cliquables)
-------------------------- */
-function viewSets(){
-  const wrap = document.createElement("div");
-  wrap.className = "pane";
+function renderRightPanel(){
+  const tabs = $("rightTabs");
+  const body = $("rightBody");
+  if(!tabs || !body) return;
 
-  const header = document.createElement("div");
-  header.className = "paneHead";
-  header.innerHTML = `
-    <div class="paneTitle">sets</div>
-    <div class="paneTools">
-      <button class="btn smallBtn" id="setNewBtn">nouveau</button>
-      <button class="btn smallBtn" id="setEditBtn">éditer</button>
-    </div>
+  state.ui.rightTab ||= "sets";
+  const tab = state.ui.rightTab;
+
+  tabs.innerHTML = `
+    <button class="tab ${tab==="sets"?"active":""}" data-t="sets">sets</button>
+    <button class="tab ${tab==="habits"?"active":""}" data-t="habits">habitudes</button>
+    <button class="tab ${tab==="stats"?"active":""}" data-t="stats">stats</button>
+    <button class="tab ${tab==="prefs"?"active":""}" data-t="prefs">préférences</button>
   `;
-  wrap.appendChild(header);
-
-  const list = document.createElement("div");
-  list.className = "setList";
-  list.innerHTML = state.sets.list
-    .slice()
-    .sort((a,b)=>(a.order||0)-(b.order||0))
-    .map(s=>{
-      const sel = s.id===state.sets.selectedId;
-      const sum = setDaySummary(s.id, dk());
-      return `
-        <button class="setPick ${sel?"on":""}" data-id="${s.id}">
-          <span class="name">${escapeHTML(s.title)}</span>
-          <span class="meta">${sum.done}/${sum.total}</span>
-        </button>
-      `;
-    }).join("");
-  wrap.appendChild(list);
-
-  // selection
-  $$(".setPick", list).forEach(b=>{
+  $$(".tab", tabs).forEach(b=>{
     b.onclick = ()=>{
-      state.sets.selectedId = b.getAttribute("data-id");
+      state.ui.rightTab = b.getAttribute("data-t");
       saveState();
       renderRightPanel();
     };
   });
 
-  // tools
-  setTimeout(()=>{
-    if($("setNewBtn")){
-      $("setNewBtn").onclick = ()=>{
-        const s = {
-          id: uid(),
-          title: `Set ${state.sets.list.length+1}`,
-          unitName: "Patient",
-          unitCount: 3,
-          items: ["Voir","Note","Traitement","Dossier"],
-          checks: {},
-          order: Date.now()+Math.random()
-        };
-        state.sets.list.push(s);
-        state.sets.selectedId = s.id;
-        saveState();
-        renderRightPanel();
-      };
-    }
-    if($("setEditBtn")){
-      $("setEditBtn").onclick = ()=>{
-        openModal("setEditModal");
-        renderSetEditor();
-      };
-    }
-  },0);
+  body.innerHTML = "";
+  ensureSelectedSet();
 
-  // checklist line-by-line
-  const set = getSetById(state.sets.selectedId);
-  if(!set){
-    const empty = document.createElement("div");
-    empty.className = "small";
-    empty.textContent = "Aucun set.";
-    wrap.appendChild(empty);
-    return wrap;
-  }
+  if(tab==="sets") body.appendChild(viewSets());
+  if(tab==="habits") body.appendChild(viewHabits());
+  if(tab==="stats") body.appendChild(viewStats());
+  if(tab==="prefs") body.appendChild(viewPrefs());
+}
 
-  initSetDay(set, dk());
-  const day = dk();
-  const checks = set.checks[day] || {};
+function viewSets(){
+  const wrap=document.createElement("div");
+  wrap.className="section";
+  const set = getSet(state.sets.selectedId);
 
-  const checklist = document.createElement("div");
-  checklist.className = "checklist";
+  wrap.innerHTML = `
+    <h3>sets</h3>
+    <div class="row">
+      <button class="btn" id="setAdd">nouveau</button>
+      <button class="btn" id="setEdit">éditer</button>
+      <select id="setPick"></select>
+    </div>
+    <div style="height:10px"></div>
+    <div id="setChecklist"></div>
+  `;
 
-  // rendu vertical: Patient 1 puis lignes item
+  const sel = wrap.querySelector("#setPick");
+  sel.innerHTML = state.sets.list.slice().sort((a,b)=>(a.order||0)-(b.order||0)).map(s=>(
+    `<option value="${s.id}" ${s.id===state.sets.selectedId?"selected":""}>${escapeHTML(s.title)}</option>`
+  )).join("");
+  sel.onchange = ()=>{
+    state.sets.selectedId = sel.value;
+    saveState();
+    renderRightPanel();
+  };
+
+  wrap.querySelector("#setAdd").onclick = ()=>{
+    const s = { id:uid(), title:`Set ${state.sets.list.length+1}`, unitName:"Patient", unitCount:3, items:["Voir","Note","Traitement","Dossier"], checks:{}, order:Date.now()+Math.random() };
+    state.sets.list.push(s);
+    state.sets.selectedId = s.id;
+    saveState();
+    renderRightPanel();
+  };
+
+  wrap.querySelector("#setEdit").onclick = ()=>{
+    openModal("setEditModal");
+    renderSetEditor();
+  };
+
+  const host = wrap.querySelector("#setChecklist");
+  if(!set){ host.innerHTML = `<div class="muted">Aucun set.</div>`; return wrap; }
+
+  const day = dayKey();
+  initSetDay(set, day);
+  const checks = set.checks[day];
+
   let html = "";
   for(let u=0; u<set.unitCount; u++){
-    html += `<div class="unitBlock">
-      <div class="unitTitle">${escapeHTML(set.unitName)} ${u+1}</div>
-      <div class="unitLines">`;
-
+    html += `<div style="margin:10px 0 6px; font-weight:900;">${escapeHTML(set.unitName)} ${u+1}</div>`;
     for(let i=0;i<set.items.length;i++){
-      const k = setCheckKey(u,i);
-      const on = !!checks[k];
+      const k=setCheckKey(u,i);
+      const on=!!checks[k];
       html += `
-        <button class="lineCheck ${on?"on":""}" data-u="${u}" data-i="${i}">
+        <button class="opt ${on?"on":""}" data-u="${u}" data-i="${i}" style="width:100%; justify-content:flex-start;">
           <span class="dot"></span>
-          <span class="txt">${escapeHTML(set.items[i])}</span>
+          <span>${escapeHTML(set.items[i])}</span>
         </button>
       `;
     }
-    html += `</div></div>`;
   }
-
-  checklist.innerHTML = html;
-  wrap.appendChild(checklist);
-
-  $$(".lineCheck", checklist).forEach(b=>{
+  host.innerHTML = html;
+  $$(".opt", host).forEach(b=>{
     b.onclick = ()=>{
-      const u = parseInt(b.getAttribute("data-u"),10);
-      const i = parseInt(b.getAttribute("data-i"),10);
-      toggleSetCheck(set.id, u, i, day);
+      const u=parseInt(b.getAttribute("data-u"),10);
+      const i=parseInt(b.getAttribute("data-i"),10);
+      const k=setCheckKey(u,i);
+      checks[k] = !checks[k];
       saveState();
       renderRightPanel();
     };
@@ -3038,53 +2026,46 @@ function viewSets(){
 function renderSetEditor(){
   const host = $("setEditBody");
   if(!host) return;
-
-  const set = getSetById(state.sets.selectedId);
-  if(!set){
-    host.innerHTML = `<div class="small">Aucun set sélectionné.</div>`;
-    return;
-  }
-  const itemsText = (set.items||[]).join("\n");
+  const set = getSet(state.sets.selectedId);
+  if(!set){ host.innerHTML = `<div class="muted">Aucun set sélectionné.</div>`; return; }
 
   host.innerHTML = `
     <div class="section">
       <h3>éditer set</h3>
       <div class="row">
         <input id="seTitle" value="${escapeHTML(set.title)}" placeholder="Titre">
-        <input id="seUnitName" value="${escapeHTML(set.unitName)}" placeholder="Nom unité (ex: Patient)">
+        <input id="seUnit" value="${escapeHTML(set.unitName)}" placeholder="Nom unité">
       </div>
       <div class="row">
-        <input id="seUnitCount" type="number" min="1" max="30" step="1" value="${set.unitCount||3}">
-        <button class="btn smallBtn" id="seResetDay">reset jour</button>
+        <input id="seCount" type="number" min="1" max="30" step="1" value="${set.unitCount}">
+        <button class="btn" id="seReset">reset jour</button>
       </div>
-      <div style="height:8px"></div>
-      <textarea id="seItems" style="min-height:180px">${escapeHTML(itemsText)}</textarea>
+      <textarea id="seItems" style="min-height:180px">${escapeHTML(set.items.join("\n"))}</textarea>
       <div class="row">
-        <button class="btn primary" id="seSave">enregistrer</button>
+        <button class="btn" id="seSave">enregistrer</button>
         <button class="btn" id="seClose">fermer</button>
-        <button class="btn danger" id="seDelete">supprimer</button>
+        <button class="btn" id="seDel">supprimer</button>
       </div>
     </div>
   `;
 
   $("seSave").onclick = ()=>{
-    set.title = $("seTitle").value.trim() || set.title;
-    set.unitName = $("seUnitName").value.trim() || set.unitName;
-    set.unitCount = clamp(parseInt($("seUnitCount").value,10)||set.unitCount, 1, 30);
-    const items = $("seItems").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-    set.items = items.slice(0,40);
+    set.title = ($("seTitle").value||"").trim() || set.title;
+    set.unitName = ($("seUnit").value||"").trim() || set.unitName;
+    set.unitCount = clamp(parseInt($("seCount").value,10)||set.unitCount, 1, 30);
+    set.items = ($("seItems").value||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,40);
     saveState();
     closeModal("setEditModal");
     renderRightPanel();
   };
   $("seClose").onclick = ()=>closeModal("setEditModal");
-  $("seResetDay").onclick = ()=>{
-    initSetDay(set, dk());
-    set.checks[dk()] = {};
+  $("seReset").onclick = ()=>{
+    initSetDay(set, dayKey());
+    set.checks[dayKey()] = {};
     saveState();
     renderRightPanel();
   };
-  $("seDelete").onclick = ()=>{
+  $("seDel").onclick = ()=>{
     if(!confirm("Supprimer ce set ?")) return;
     state.sets.list = state.sets.list.filter(s=>s.id!==set.id);
     ensureSelectedSet();
@@ -3094,104 +2075,50 @@ function renderSetEditor(){
   };
 }
 
-/* -------------------------
-   VIEW: HABITS (chips simple)
-------------------------- */
 function viewHabits(){
-  const wrap = document.createElement("div");
-  wrap.className="pane";
-
-  const header = document.createElement("div");
-  header.className="paneHead";
-  header.innerHTML = `
-    <div class="paneTitle">habitudes</div>
-    <div class="paneTools">
-      <button class="btn smallBtn" id="habNew">ajouter</button>
-    </div>
-  `;
-  wrap.appendChild(header);
-
-  const add = document.createElement("div");
-  add.className="section compact hidden";
-  add.id = "habAddBox";
-  add.innerHTML = `
-    <div class="row">
-      <input id="habName" placeholder="Nom (ex: eau)">
-      <input id="habSlots" type="number" min="3" max="12" step="1" value="8">
-    </div>
-    <div class="row">
-      <button class="btn primary" id="habAdd">enregistrer</button>
-      <button class="btn" id="habCancel">annuler</button>
-    </div>
-  `;
-  wrap.appendChild(add);
-
-  const list = document.createElement("div");
-  list.className="habitList";
-
-  if(state.habits.length===0){
-    list.innerHTML = `<div class="small">Aucune habitude.</div>`;
-  }else{
-    list.innerHTML = state.habits.map(h=>{
-      const p = habitProgress(h);
-      const chips = (h.checks||[]).map((c,idx)=>`
-        <button class="chipDot ${c?"on":""}" data-h="${h.id}" data-i="${idx}" title="toggle"></button>
-      `).join("");
+  const wrap=document.createElement("div");
+  wrap.className="section";
+  wrap.innerHTML = `<h3>habitudes</h3><div id="habList"></div><div class="row"><button class="btn" id="habAdd">ajouter</button></div>`;
+  const host = wrap.querySelector("#habList");
+  if(!state.habits.length){
+    host.innerHTML = `<div class="muted">Aucune habitude.</div>`;
+  } else {
+    host.innerHTML = state.habits.map(h=>{
+      const done = (h.checks||[]).filter(Boolean).length;
+      const tot = (h.checks||[]).length;
+      const chips = (h.checks||[]).map((v,i)=>`<button class="chip ${v?"on":""}" data-h="${h.id}" data-i="${i}" title="toggle"></button>`).join("");
       return `
-        <div class="habitRow">
-          <div class="hTop">
-            <div class="hName">${escapeHTML(h.name)}</div>
-            <div class="hMeta">${p.done}/${p.tot}</div>
+        <div class="section" style="margin:10px 0; padding:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+            <div style="font-weight:950;">${escapeHTML(h.name)}</div>
+            <div class="muted">${done}/${tot}</div>
           </div>
-          <div class="hChips">${chips}</div>
-          <div class="hTools">
-            <button class="btn smallBtn" data-act="reset" data-h="${h.id}">reset</button>
-            <button class="btn smallBtn danger" data-act="del" data-h="${h.id}">supprimer</button>
+          <div class="chips" style="justify-content:flex-start; margin:8px 0;">${chips}</div>
+          <div class="row">
+            <button class="btn" data-act="reset" data-h="${h.id}">reset</button>
+            <button class="btn" data-act="del" data-h="${h.id}">supprimer</button>
           </div>
         </div>
       `;
     }).join("");
   }
 
-  wrap.appendChild(list);
-
-  // handlers
   setTimeout(()=>{
-    if($("habNew")){
-      $("habNew").onclick = ()=>{
-        const box = $("habAddBox");
-        box.classList.toggle("hidden");
-      };
-    }
-    if($("habAdd")){
-      $("habAdd").onclick = ()=>{
-        const nm = ($("habName").value||"").trim();
-        const sl = clamp(parseInt($("habSlots").value,10)||8, 3, 12);
-        if(!nm) return;
-        state.habits.unshift({ id: uid(), name:nm, slots: sl, checks: Array.from({length:sl},()=>false), createdAt: nowISO() });
-        $("habName").value="";
-        $("habAddBox").classList.add("hidden");
-        saveState();
-        renderRightPanel();
-      };
-    }
-    if($("habCancel")){
-      $("habCancel").onclick = ()=>$("habAddBox").classList.add("hidden");
-    }
-
-    $$(".chipDot", list).forEach(b=>{
-      b.onclick = ()=>{
-        const hId = b.getAttribute("data-h");
-        const idx = parseInt(b.getAttribute("data-i"),10);
-        toggleHabitCheck(hId, idx);
+    $$(".chip", host).forEach(b=>{
+      b.onclick=()=>{
+        const hId=b.getAttribute("data-h");
+        const idx=parseInt(b.getAttribute("data-i"),10);
+        const h = state.habits.find(x=>x.id===hId);
+        if(!h) return;
+        h.checks[idx]=!h.checks[idx];
         saveState();
         renderRightPanel();
       };
     });
-    $$("button[data-act]", list).forEach(b=>{
-      b.onclick = ()=>{
-        const act = b.getAttribute("data-act");
-        const hId = b.getAttribute("data-h");
+    $$("button[data-act]", host).forEach(b=>{
+      b.onclick=()=>{
+        const act=b.getAttribute("data-act");
+        const hId=b.getAttribute("data-h");
         const h = state.habits.find(x=>x.id===hId);
         if(!h) return;
         if(act==="reset") h.checks = h.checks.map(()=>false);
@@ -3203,865 +2130,367 @@ function viewHabits(){
         renderRightPanel();
       };
     });
+    wrap.querySelector("#habAdd").onclick=()=>{
+      const name = prompt("Nom habitude :", "Respiration");
+      if(name===null) return;
+      const slots = clamp(parseInt(prompt("Nombre de cases (3-12) :", "6")||"6",10), 3, 12);
+      state.habits.unshift({ id:uid(), name:name.trim()||"Habitude", slots, checks:Array.from({length:slots},()=>false), createdAt:nowISO() });
+      saveState();
+      renderRightPanel();
+    };
   },0);
 
   return wrap;
 }
 
-/* -------------------------
-   VIEW: MOOD (TCC, peu de texte, suggestions dynamiques)
-------------------------- */
-function viewMood(){
-  const wrap = document.createElement("div");
-  wrap.className="pane";
-
-  const header = document.createElement("div");
-  header.className="paneHead";
-  header.innerHTML = `<div class="paneTitle">humeur (tcc)</div>`;
-  wrap.appendChild(header);
-
-  // honeycomb simple (ruche): 21 pastilles = entrées récentes
-  const honey = document.createElement("div");
-  honey.className="honey";
-  const recent = (state.mood.entries||[]).slice(0,21);
-  honey.innerHTML = recent.map(e=>{
-    const col = moodColor(e.emotion, e.intensity);
-    return `<div class="hCell" style="background:${col}" title="${escapeHTML(e.emotion)} ${e.intensity}/10"></div>`;
-  }).join("") || `<div class="small">Aucune entrée récente.</div>`;
-  wrap.appendChild(honey);
-
-  const form = document.createElement("div");
-  form.className="section compact";
-  form.innerHTML = `
-    <div class="small" style="margin-bottom:6px">Sélectionne. Clique. Enregistre. Pas de dissertation.</div>
-
-    <div class="pickRow" id="emoPick"></div>
-
-    <div class="sliderRow">
-      <div class="small">intensité: <span id="intVal">5</span>/10</div>
-      <input id="intSlider" type="range" min="0" max="10" step="1" value="5">
+function viewStats(){
+  const wrap=document.createElement("div");
+  wrap.className="section";
+  ensureBaseline(false);
+  const p = computeProgress();
+  wrap.innerHTML = `
+    <h3>stats</h3>
+    <div class="muted">Tâches faites: ${state.stats.tasksDone||0} · Étorions faits: ${state.stats.etorionsDone||0}</div>
+    <div class="muted">Progression: ${p.pct}% · Reste: ${p.remT} tâches</div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn" id="openExport">export</button>
+      <button class="btn" id="clearDone">vider finies</button>
+      <button class="btn" id="resetBaseline">reset baseline</button>
     </div>
+  `;
+  setTimeout(()=>{
+    wrap.querySelector("#openExport").onclick=()=>{
+      openModal("exportModal");
+      if($("expOut")) $("expOut").value = exportText();
+    };
+    wrap.querySelector("#clearDone").onclick=()=>{
+      if(!confirm("Supprimer toutes les tâches finies ?")) return;
+      pushUndo("clearDone");
+      state.tasks = state.tasks.filter(t=>!t.done);
+      ensureBaseline(true);
+      ensureCurrentTask();
+      saveState();
+      renderAll();
+      renderRightPanel();
+    };
+    wrap.querySelector("#resetBaseline").onclick=()=>{
+      pushUndo("baseline");
+      ensureBaseline(true);
+      saveState();
+      renderAll();
+      renderRightPanel();
+    };
+  },0);
+  return wrap;
+}
 
-    <div class="pickRow" id="thoughtPick"></div>
-    <div class="pickRow" id="distPick"></div>
-    <div class="pickRow" id="needPick"></div>
-    <div class="pickRow" id="actionPick"></div>
+function viewPrefs(){
+  const wrap=document.createElement("div");
+  wrap.className="section";
+
+  wrap.innerHTML = `
+    <h3>préférences</h3>
+
+    <div class="muted" style="margin-bottom:8px">Deux modes visuels, et les saisons comme palettes.</div>
 
     <div class="row">
-      <button class="btn primary" id="moodSave">enregistrer</button>
-      <button class="btn" id="moodSuggest">proposer</button>
+      <button class="btn" id="prefTheme">${state.ui.theme==="pastel-dark"?"passer pastel clair":"passer pastel foncé"}</button>
+      <button class="btn" id="prefSeason">saison: ${state.ui.season}</button>
     </div>
 
-    <div class="small" id="moodAfter" style="margin-top:10px"></div>
-  `;
-  wrap.appendChild(form);
+    <div style="height:8px"></div>
 
-  // build pickers
-  let current = {
-    emotion: "Stress",
-    intensity: 5,
-    thought: "",
-    distortion: "",
-    need: "",
-    action: ""
+    <div class="row">
+      <button class="btn" id="prefTagline">${state.ui.showTagline?"masquer phrase":"afficher phrase"}</button>
+      <button class="btn" id="prefPomo">${state.ui.showPomodoro?"masquer pomodoro":"afficher pomodoro"}</button>
+      <button class="btn" id="prefMotion">${(state.ui.reduceMotion||false)?"animations: off":"animations: on"}</button>
+    </div>
+
+    <div style="height:8px"></div>
+
+    <div class="row">
+      <button class="btn" id="prefBarBig">barre: plus grande</button>
+      <button class="btn" id="prefBarDefault">barre: défaut</button>
+    </div>
+
+    <div style="height:8px"></div>
+
+    <div class="row">
+      <button class="btn" id="prefKiff">kiffance surprise</button>
+    </div>
+  `;
+
+  setTimeout(()=>{
+    wrap.querySelector("#prefTheme").onclick=()=>{
+      state.ui.theme = (state.ui.theme==="pastel-dark") ? "pastel-light" : "pastel-dark";
+      saveState(); applyTheme(); renderAll(); renderRightPanel();
+    };
+    wrap.querySelector("#prefSeason").onclick=()=>{
+      const i = SEASONS.indexOf(state.ui.season);
+      state.ui.season = SEASONS[(i+1)%SEASONS.length];
+      saveState(); applyTheme(); renderAll(); renderRightPanel();
+    };
+    wrap.querySelector("#prefTagline").onclick=()=>{
+      state.ui.showTagline = !state.ui.showTagline;
+      saveState(); renderAll(); renderRightPanel();
+    };
+    wrap.querySelector("#prefPomo").onclick=()=>{
+      state.ui.showPomodoro = !state.ui.showPomodoro;
+      saveState(); renderAll(); renderRightPanel();
+    };
+    wrap.querySelector("#prefMotion").onclick=()=>{
+      state.ui.reduceMotion = !state.ui.reduceMotion;
+      saveState(); applyTheme(); startPollen(); renderAll(); renderRightPanel();
+    };
+    wrap.querySelector("#prefBarBig").onclick=()=>{
+      // barre énorme (répond “trop petite”)
+      state.ui.progressH = "clamp(180px, 26vh, 360px)";
+      saveState(); applyTheme(); renderAll();
+    };
+    wrap.querySelector("#prefBarDefault").onclick=()=>{
+      state.ui.progressH = null;
+      saveState(); applyTheme(); renderAll();
+    };
+    wrap.querySelector("#prefKiff").onclick=()=>showKiffance();
+  },0);
+
+  return wrap;
+}
+
+/* ============================================================
+  RENDER central UI
+============================================================ */
+function renderProgress(){
+  ensureBaseline(false);
+  const p = computeProgress();
+  if($("barFill")) $("barFill").style.width = `${p.pct}%`;
+  if($("barPct"))  $("barPct").textContent = `${p.pct}%`;
+}
+function renderCurrentTask(){
+  ensureCurrentTask();
+  const t = getTask(state.currentTaskId);
+
+  if($("taskName")) $("taskName").textContent = t ? t.title : "Aucune tâche";
+
+  if($("etorChips")){
+    if(!t){ $("etorChips").innerHTML=""; }
+    else{
+      const total=t.etorionsTotal||1;
+      const left=t.etorionsLeft ?? total;
+      $("etorChips").innerHTML = Array.from({length:total},(_,i)=>`<span class="chip ${i<left?"on":""}"></span>`).join("");
+    }
+  }
+
+  // HUD pill
+  const p = computeProgress();
+  if($("hudPill")){
+    const chrono = formatMMSS(timerNowMs());
+    $("hudPill").textContent = `${(p.baseT-p.remT)}/${p.baseT} · ${chrono}`;
+  }
+}
+function renderAll(){
+  applyTheme();
+  maybeNewTagline();
+  renderProgress();
+  renderPomodoro();
+  renderCurrentTask();
+  renderBelowList();
+  renderFocus();
+  renderNotes();
+}
+
+/* ============================================================
+  Wire UI
+============================================================ */
+function bindUI(){
+  // topbar
+  if($("btnLeft"))  $("btnLeft").onclick  = ()=>panelOpen("left", true);
+  if($("btnRight")) $("btnRight").onclick = ()=>{ panelOpen("right", true); renderRightPanel(); };
+  if($("leftBack")) $("leftBack").onclick = ()=>panelOpen("left", false);
+  if($("rightBack"))$("rightBack").onclick= ()=>panelOpen("right", false);
+  if($("leftClose"))$("leftClose").onclick= ()=>panelOpen("left", false);
+  if($("rightClose"))$("rightClose").onclick= ()=>panelOpen("right", false);
+
+  if($("btnTheme")) $("btnTheme").onclick = ()=>{
+    state.ui.theme = (state.ui.theme==="pastel-dark") ? "pastel-light" : "pastel-dark";
+    saveState(); renderAll(); renderRightPanel();
+  };
+  if($("btnSeason")) $("btnSeason").onclick = ()=>{
+    const i = SEASONS.indexOf(state.ui.season);
+    state.ui.season = SEASONS[(i+1)%SEASONS.length];
+    saveState(); renderAll(); renderRightPanel();
   };
 
-  function pickButton(label, val, groupKey){
-    const on = (current[groupKey]===val);
-    return `<button class="pickBtn ${on?"on":""}" data-g="${groupKey}" data-v="${escapeHTML(val)}">${escapeHTML(label)}</button>`;
-  }
+  if($("btnFocus")) $("btnFocus").onclick = ()=>enterFocus();
+  if($("btnExitFocus")) $("btnExitFocus").onclick = ()=>exitFocus();
 
-  function emoOptions(){
-    return EMOS.map(e=>pickButton(e,e,"emotion")).join("");
-  }
+  // main actions
+  if($("btnEto")) $("btnEto").onclick = degommeEtorion;
+  if($("btnUndo")) $("btnUndo").onclick = undo;
 
-  function getSuggestionsForEmotion(emo){
-    return EMO_MAP[emo] || {
-      thoughts:["Pensée automatique (à préciser)"],
-      distortions:DIST.map(x=>x.k),
-      needs: NEEDS,
-      actions: ACTIONS
-    };
-  }
+  if($("btnRoulette")) $("btnRoulette").onclick = ()=>{
+    const list = sortTasks(activeTasks());
+    if(!list.length) return;
+    const pinned = list.filter(t=>t.pinned);
+    const pool = pinned.length ? pinned : list;
+    const pick = pool[Math.floor(Math.random()*pool.length)];
+    state.currentTaskId = pick.id;
+    saveState();
+    renderAll();
+  };
 
-  function renderPicks(){
-    const sug = getSuggestionsForEmotion(current.emotion);
+  if($("btnList")) $("btnList").onclick = ()=>{
+    state.ui.showBelowList = !state.ui.showBelowList;
+    saveState();
+    renderAll();
+  };
+  if($("btnHideList")) $("btnHideList").onclick = ()=>{
+    state.ui.showBelowList = false;
+    saveState();
+    renderAll();
+  };
 
-    if($("emoPick")) $("emoPick").innerHTML = `<div class="pickLabel">émotion</div>` + emoOptions();
+  if($("btnEdit")) $("btnEdit").onclick = ()=>{
+    const t = getTask(state.currentTaskId);
+    if(!t) return;
+    openTaskEditor(t.id);
+  };
 
-    if($("thoughtPick")) $("thoughtPick").innerHTML =
-      `<div class="pickLabel">pensée</div>` +
-      sug.thoughts.slice(0,8).map(t=>pickButton(t,t,"thought")).join("");
+  if($("btnPause")) $("btnPause").onclick = ()=>{
+    toggleGlobalPause();
+    renderAll();
+  };
 
-    if($("distPick")) $("distPick").innerHTML =
-      `<div class="pickLabel">distorsion</div>` +
-      sug.distortions.slice(0,8).map(k=>pickButton(k,k,"distortion")).join("");
+  if($("btnKiff")) $("btnKiff").onclick = showKiffance;
 
-    if($("needPick")) $("needPick").innerHTML =
-      `<div class="pickLabel">besoin</div>` +
-      sug.needs.slice(0,8).map(n=>pickButton(n,n,"need")).join("");
+  // notes modal
+  if($("btnNotes")) $("btnNotes").onclick = ()=>openModal("notesModal");
+  if($("noteAdd")) $("noteAdd").onclick = ()=>{
+    addNote($("noteInput")?.value||"");
+    if($("noteInput")) $("noteInput").value="";
+  };
+  if($("noteClear")) $("noteClear").onclick = ()=>{
+    if(!confirm("Vider les notes ?")) return;
+    state.notes = [];
+    saveState();
+    renderNotes();
+  };
 
-    if($("actionPick")) $("actionPick").innerHTML =
-      `<div class="pickLabel">outil</div>` +
-      sug.actions.slice(0,8).map(a=>pickButton(a,a,"action")).join("");
+  // pomodoro
+  if($("btnPomoToggle")) $("btnPomoToggle").onclick = ()=>{
+    state.pomodoro.visible = !state.pomodoro.visible;
+    saveState(); renderPomodoro();
+  };
+  if($("btnPomoStart")) $("btnPomoStart").onclick = ()=>{
+    if(!state.pomodoro.running) pomodoroStart();
+    else pomodoroPauseToggle();
+    renderPomodoro();
+  };
+  if($("btnPomoStop")) $("btnPomoStop").onclick = ()=>{
+    pomodoroStop();
+    renderPomodoro();
+  };
 
-    // bind
-    $$(".pickBtn", form).forEach(b=>{
-      b.onclick = ()=>{
-        const g = b.getAttribute("data-g");
-        const v = b.getAttribute("data-v");
-        current[g] = v;
-        renderPicks();
-      };
-    });
-  }
+  // click time => set minutes
+  if($("pomoClickZone")) $("pomoClickZone").onclick = ()=>{
+    const v = prompt("Durée pomodoro (minutes, 5 à 90) :", String(state.pomodoro.minutes||25));
+    if(v===null) return;
+    state.pomodoro.minutes = clamp(parseInt(v,10)||25, 5, 90);
+    if(!state.pomodoro.running) renderPomodoro();
+    saveState();
+  };
 
-  setTimeout(()=>{
-    // slider
-    if($("intSlider")){
-      $("intSlider").oninput = ()=>{
-        current.intensity = parseInt($("intSlider").value,10)||0;
-        if($("intVal")) $("intVal").textContent = String(current.intensity);
-      };
+  // focus overlay buttons mirror
+  if($("fEto")) $("fEto").onclick = degommeEtorion;
+  if($("fUndo")) $("fUndo").onclick = undo;
+  if($("fNotes")) $("fNotes").onclick = ()=>openModal("notesModal");
+  if($("fPause")) $("fPause").onclick = ()=>{ toggleGlobalPause(); renderAll(); };
+  if($("fKiff")) $("fKiff").onclick = showKiffance;
+  if($("fPomoStart")) $("fPomoStart").onclick = ()=>{
+    if(!state.pomodoro.running) pomodoroStart();
+    else pomodoroPauseToggle();
+    renderAll();
+  };
+  if($("fPomoStop")) $("fPomoStop").onclick = ()=>{ pomodoroStop(); renderAll(); };
+  if($("fPomoClick")) $("fPomoClick").onclick = ()=>$("pomoClickZone")?.click();
+
+  // export
+  if($("expRefresh")) $("expRefresh").onclick = ()=>{ if($("expOut")) $("expOut").value = exportText(); };
+  if($("expCopy")) $("expCopy").onclick = async ()=>{
+    const txt = exportText();
+    if($("expOut")) $("expOut").value = txt;
+    try{ await navigator.clipboard.writeText(txt); $("expCopy").textContent="copié"; }
+    catch(_){ $("expCopy").textContent="échec"; }
+    setTimeout(()=>{ $("expCopy").textContent="copier"; }, 900);
+  };
+
+  // keyboard
+  document.addEventListener("keydown",(e)=>{
+    if(e.key==="Escape"){
+      closeAllModals();
+      if(state.ui.focus) exitFocus();
+      panelOpen("left", false);
+      panelOpen("right", false);
     }
-
-    // suggest fills missing fields
-    if($("moodSuggest")){
-      $("moodSuggest").onclick = ()=>{
-        const sug = getSuggestionsForEmotion(current.emotion);
-        if(!current.thought) current.thought = sug.thoughts[0] || "";
-        if(!current.distortion) current.distortion = sug.distortions[0] || "";
-        if(!current.need) current.need = sug.needs[0] || "";
-        if(!current.action) current.action = sug.actions[0] || "";
-        renderPicks();
-      };
+    // espace => pause global (si pas dans input)
+    const tag = (document.activeElement?.tagName||"").toLowerCase();
+    if(e.code==="Space" && !["input","textarea","select"].includes(tag)){
+      e.preventDefault();
+      toggleGlobalPause();
+      renderAll();
     }
-
-    // save
-    if($("moodSave")){
-      $("moodSave").onclick = ()=>{
-        const entry = {
-          id: uid(),
-          day: dk(),
-          at: nowISO(),
-          emotion: current.emotion,
-          intensity: clamp(parseInt(current.intensity,10)||0, 0, 10),
-          thought: current.thought || "",
-          distortion: current.distortion || "",
-          need: current.need || "",
-          action: current.action || ""
-        };
-        moodAdd(entry);
-        saveState();
-
-        // after: tip distorsion + action
-        const dist = DIST.find(x=>x.k===entry.distortion);
-        const tip = dist ? dist.tip : "Choisis une alternative plus nuancée.";
-        if($("moodAfter")){
-          $("moodAfter").textContent = `Proposition: ${entry.action || "respirer 2 minutes"} · Astuce: ${tip}`;
-        }
-        renderRightPanel();
-      };
-    }
-
-    renderPicks();
-  },0);
-
-  // today list minimal
-  const today = moodToday();
-  const recap = document.createElement("div");
-  recap.className = "section compact";
-  recap.innerHTML = `<div class="paneTitle" style="font-size:12px">aujourd’hui</div>` +
-    (today.length ? today.slice(0,10).map(e=>{
-      const col = moodColor(e.emotion, e.intensity);
-      return `
-        <div class="mLine">
-          <span class="mDot" style="background:${col}"></span>
-          <span class="mTxt">${escapeHTML(e.emotion)} ${e.intensity}/10 · ${escapeHTML(e.need||"")}</span>
-        </div>`;
-    }).join("") : `<div class="small">Aucune entrée.</div>`);
-  wrap.appendChild(recap);
-
-  return wrap;
-}
-
-// couleurs nature/pastel: emotion/intensity -> pastel shade
-function moodColor(emo, intensity){
-  const t = clamp((intensity||0)/10, 0, 1);
-  // palettes douces: pas de violet
-  const base = {
-    "Joie":[244, 214, 140],
-    "Calme":[168, 214, 196],
-    "Stress":[235, 196, 160],
-    "Anxiété":[240, 186, 168],
-    "Tristesse":[170, 190, 220],
-    "Colère":[220, 160, 150],
-    "Honte":[210, 175, 190],
-    "Culpabilité":[200, 185, 170],
-    "Fatigue":[200, 205, 210],
-    "Frustration":[225, 180, 160],
-    "Solitude":[175, 195, 215],
-    "Irritabilité":[230, 175, 150],
-    "Peur":[210, 185, 150],
-    "Soulagement":[180, 220, 190]
-  }[emo] || [200,200,200];
-
-  // intensité -> plus sombre/contrasté
-  const f = 0.78 - t*0.22;
-  const r = Math.round(base[0]*f);
-  const g = Math.round(base[1]*f);
-  const b = Math.round(base[2]*f);
-  return `rgb(${r},${g},${b})`;
-}
-
-/* -------------------------
-   VIEW: CALENDAR (mois) + planning tasks
-------------------------- */
-function viewCalendar(){
-  const wrap = document.createElement("div");
-  wrap.className="pane";
-
-  const header = document.createElement("div");
-  header.className="paneHead";
-
-  const now = new Date();
-  state.ui.calMonth = state.ui.calMonth || monthKey(now);
-  const [yy,mm] = state.ui.calMonth.split("-").map(x=>parseInt(x,10));
-  const first = new Date(yy, mm-1, 1);
-  const startDow = (first.getDay()+6)%7; // lundi=0
-  const daysInMonth = new Date(yy, mm, 0).getDate();
-
-  header.innerHTML = `
-    <div class="paneTitle">calendrier</div>
-    <div class="paneTools">
-      <button class="btn smallBtn" id="calPrev">préc</button>
-      <button class="btn smallBtn" id="calNext">suiv</button>
-    </div>
-  `;
-  wrap.appendChild(header);
-
-  const grid = document.createElement("div");
-  grid.className="calGrid";
-
-  // cells: leading blanks
-  for(let i=0;i<startDow;i++){
-    const c = document.createElement("div");
-    c.className="calCell blank";
-    grid.appendChild(c);
-  }
-
-  for(let d=1; d<=daysInMonth; d++){
-    const day = `${yy}-${String(mm).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-    const plans = planForDay(day);
-    const moods = (state.mood.entries||[]).filter(e=>e.day===day);
-    const topMood = moods[0] || null;
-    const moodCol = topMood ? moodColor(topMood.emotion, topMood.intensity) : "";
-
-    const c = document.createElement("button");
-    c.type="button";
-    c.className="calCell";
-    c.innerHTML = `
-      <div class="calTop">
-        <span class="calDay">${d}</span>
-        <span class="calMood" style="${moodCol?`background:${moodCol}`:""}"></span>
-      </div>
-      <div class="calMini">${plans.slice(0,2).map(p=>escapeHTML(p.title)).join(" · ")}</div>
-    `;
-    c.onclick = ()=>openCalendarDay(day);
-    grid.appendChild(c);
-  }
-
-  wrap.appendChild(grid);
-
-  setTimeout(()=>{
-    if($("calPrev")) $("calPrev").onclick = ()=>{
-      const cur = new Date(yy, mm-2, 1);
-      state.ui.calMonth = monthKey(cur);
-      saveState();
-      renderRightPanel();
-    };
-    if($("calNext")) $("calNext").onclick = ()=>{
-      const cur = new Date(yy, mm, 1);
-      state.ui.calMonth = monthKey(cur);
-      saveState();
-      renderRightPanel();
-    };
-  },0);
-
-  return wrap;
-}
-
-function openCalendarDay(day){
-  if(!$("calendarModal")) return;
-  openModal("calendarModal");
-
-  const plans = planForDay(day);
-  const moods = (state.mood.entries||[]).filter(e=>e.day===day);
-
-  $("calendarTitle").textContent = `Jour ${day}`;
-  const host = $("calendarBody");
-
-  host.innerHTML = `
-    <div class="section compact">
-      <h3>planifier</h3>
-      <div class="row">
-        <input id="planTitle" placeholder="Tâche (future)">
-        <input id="planMin" type="number" min="1" max="240" step="1" value="10">
-      </div>
-      <div class="row">
-        <button class="btn primary" id="planAddBtn">ajouter</button>
-        <button class="btn" id="planCloseBtn">fermer</button>
-      </div>
-    </div>
-
-    <div style="height:10px"></div>
-
-    <div class="section compact">
-      <h3>à faire ce jour</h3>
-      <div id="planList">${plans.length ? plans.map(p=>`
-        <div class="planLine">
-          <div class="planTxt">${escapeHTML(p.title)} <span class="small">(${p.minutes} min)</span></div>
-          <button class="btn smallBtn danger" data-del="${p.id}">supprimer</button>
-        </div>
-      `).join("") : `<div class="small">Rien.</div>`}</div>
-    </div>
-
-    <div style="height:10px"></div>
-
-    <div class="section compact">
-      <h3>humeur ce jour</h3>
-      ${moods.length ? moods.slice(0,8).map(e=>{
-        const col = moodColor(e.emotion, e.intensity);
-        return `<div class="mLine"><span class="mDot" style="background:${col}"></span><span class="mTxt">${escapeHTML(e.emotion)} ${e.intensity}/10</span></div>`;
-      }).join("") : `<div class="small">Aucune entrée.</div>`}
-    </div>
-  `;
-
-  setTimeout(()=>{
-    if($("planAddBtn")){
-      $("planAddBtn").onclick = ()=>{
-        const title = ($("planTitle").value||"").trim();
-        const min = $("planMin").value;
-        if(!title) return;
-        planAdd(day, title, min);
-        saveState();
-        openCalendarDay(day); // rerender modal
-      };
-    }
-    if($("planCloseBtn")) $("planCloseBtn").onclick = ()=>closeModal("calendarModal");
-
-    $$("button[data-del]", host).forEach(b=>{
-      b.onclick = ()=>{
-        planDelete(b.getAttribute("data-del"));
-        saveState();
-        openCalendarDay(day);
-      };
-    });
-  },0);
-}
-
-/* -------------------------
-   VIEW: STATS (ranges + mini charts)
-------------------------- */
-function viewStats(){
-  const wrap = document.createElement("div");
-  wrap.className="pane";
-
-  const header = document.createElement("div");
-  header.className="paneHead";
-  header.innerHTML = `
-    <div class="paneTitle">stats</div>
-    <div class="paneTools">
-      <button class="btn smallBtn" data-r="2h">2h</button>
-      <button class="btn smallBtn" data-r="1d">jour</button>
-      <button class="btn smallBtn" data-r="7d">7j</button>
-      <button class="btn smallBtn" data-r="30d">30j</button>
-    </div>
-  `;
-  wrap.appendChild(header);
-
-  const box = document.createElement("div");
-  box.className="section compact";
-  box.innerHTML = `
-    <div class="small" style="margin-bottom:8px">Courbe simple: tâches finies (par jour). Légende: plus haut = plus de finies.</div>
-    <canvas id="statsCanvas" width="800" height="240" style="width:100%; height:auto"></canvas>
-    <div class="row" style="margin-top:10px">
-      <button class="btn primary" id="exportTextBtn">export texte</button>
-      <button class="btn" id="exportCopyBtn">copier</button>
-    </div>
-    <textarea id="exportOut" style="min-height:180px; margin-top:10px"></textarea>
-  `;
-  wrap.appendChild(box);
-
-  setTimeout(()=>{
-    $$("button[data-r]", header).forEach(b=>{
-      b.onclick = ()=>{
-        state.statsView.range = b.getAttribute("data-r");
-        saveState();
-        renderRightPanel();
-      };
-    });
-
-    if($("exportTextBtn")){
-      $("exportTextBtn").onclick = ()=>{
-        $("exportOut").value = exportTextReport();
-      };
-    }
-    if($("exportCopyBtn")){
-      $("exportCopyBtn").onclick = exportCopy;
-    }
-
-    drawStatsChart();
-    $("exportOut").value = exportTextReport();
-  },0);
-
-  return wrap;
-}
-
-function drawStatsChart(){
-  const c = $("statsCanvas");
-  if(!c) return;
-  const ctx = c.getContext("2d");
-  const W = c.width, H = c.height;
-  ctx.clearRect(0,0,W,H);
-
-  // prepare series by day from doneAt
-  const range = state.statsView.range || "7d";
-  let days = 7;
-  if(range==="1d") days = 1;
-  if(range==="30d") days = 30;
-  if(range==="2h") days = 1; // fallback: show day, but we could do hours later
-
-  const today = new Date();
-  const series = [];
-  for(let i=days-1; i>=0; i--){
-    const d = addDays(today, -i);
-    const key = dk(d);
-    const count = state.tasks.filter(t=>t.done && t.doneAt && String(t.doneAt).startsWith(key)).length;
-    series.push({ key, v: count });
-  }
-
-  const maxV = Math.max(1, ...series.map(x=>x.v));
-  const pad = 28;
-  const innerW = W - pad*2;
-  const innerH = H - pad*2;
-
-  // grid
-  ctx.globalAlpha = 0.15;
-  ctx.strokeStyle = "#000";
-  ctx.lineWidth = 1;
-  for(let i=0;i<=4;i++){
-    const y = pad + (innerH*(i/4));
-    ctx.beginPath();
-    ctx.moveTo(pad, y);
-    ctx.lineTo(W-pad, y);
-    ctx.stroke();
-  }
-  ctx.globalAlpha = 1;
-
-  // line
-  ctx.strokeStyle = "#000";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  series.forEach((p,idx)=>{
-    const x = pad + innerW*(idx/(series.length-1 || 1));
-    const y = pad + innerH*(1 - (p.v/maxV));
-    if(idx===0) ctx.moveTo(x,y);
-    else ctx.lineTo(x,y);
   });
-  ctx.stroke();
-
-  // points
-  ctx.fillStyle = "#000";
-  series.forEach((p,idx)=>{
-    const x = pad + innerW*(idx/(series.length-1 || 1));
-    const y = pad + innerH*(1 - (p.v/maxV));
-    ctx.beginPath();
-    ctx.arc(x,y,3,0,Math.PI*2);
-    ctx.fill();
-  });
-
-  // labels minimal
-  ctx.fillStyle = "#000";
-  ctx.font = "12px system-ui";
-  ctx.fillText(`Range: ${range}`, 10, 18);
-  ctx.fillText(`Max/jour: ${maxV}`, W-120, 18);
 }
 
-/* =========================================================
-   PREFERENCES “APPLY” (si présent dans drawer)
-   - on écrit dans state.prefsDraft pendant édition
-   - on applique quand l’utilisateur clique “appliquer”
-   ========================================================= */
-function prefsDraftInit(){
-  if(state.prefsDraft) return;
-  // copie des options UI existantes
-  state.prefsDraft = structuredClone(state.ui);
-  saveState();
+/* ============================================================
+  TICK LOOP
+============================================================ */
+let tick = null;
+function startTick(){
+  if(tick) return;
+  tick = setInterval(()=>{
+    // pomodoro countdown
+    if(state.pomodoro.running && !state.pomodoro.paused){
+      const left = pomodoroLeftMs();
+      if(left!==null && left<=0){
+        pomodoroStop();
+        renderPomodoro();
+        showKiffance();
+      }else{
+        renderPomodoro();
+      }
+    }
+    // HUD pill time
+    if($("hudPill")) {
+      const p = computeProgress();
+      $("hudPill").textContent = `${(p.baseT-p.remT)}/${p.baseT} · ${formatMMSS(timerNowMs())}`;
+    }
+  }, 500);
 }
-function prefsApply(){
-  if(!state.prefsDraft) return;
-  state.ui = structuredClone(state.prefsDraft);
-  state.prefsDraft = null;
-  saveState();
+
+/* ============================================================
+  Boot
+============================================================ */
+(function boot(){
+  // init basics
+  if(!state.timer.startedAt) state.timer.startedAt = Date.now();
+
+  seedKiffanceIfEmpty();
+  seedSetsHabitsIfEmpty();
+  ensureBaseline(false);
+  ensureCurrentTask();
+
+  applyTheme();
+  initPanelResizer("left");
+  initPanelResizer("right");
+  bindModalClose();
+  initFX();
+  bindUI();
+  startTick();
+
+  // initial render
   renderAll();
-  renderRightPanel();
-}
-function prefsDiscard(){
-  state.prefsDraft = null;
-  saveState();
-  renderAll();
-  renderRightPanel();
-}
-
-/* =========================================================
-   WIRE: drawer / right panel / modals
-   ========================================================= */
-function bindPart4(){
-  // right open/close handled in Part 2; here re-render on open
-  if($("btnRight")){
-    const old = $("btnRight").onclick;
-    $("btnRight").onclick = (e)=>{
-      if(old) old(e);
-      setTimeout(()=>renderRightPanel(), 0);
-    };
-  }
-
-  // categories filter block render
-  renderDrawerCats();
-
-  // export modal if exists
-  if($("exportCopyBtn")) $("exportCopyBtn").onclick = exportCopy;
-
-  // undo override (Part 3 already binds; keep)
-  if($("btnUndo")) $("btnUndo").onclick = ()=>undoTasks();
-
-  // set/habit/mood/calendar modals close if present
-  ["setEditModal","calendarModal","taskEditModal","victoryModal","kiffModal","notesModal"].forEach(id=>{
-    const el = $(id);
-    if(el){
-      el.addEventListener("click",(e)=>{
-        // click outside content closes only if the modal uses that pattern in your HTML/CSS
-        if(e.target===el) closeModal(id);
-      });
-    }
-  });
-
-  // Preferences apply buttons (if you placed them in drawer)
-  if($("prefsApplyBtn")) $("prefsApplyBtn").onclick = prefsApply;
-  if($("prefsDiscardBtn")) $("prefsDiscardBtn").onclick = prefsDiscard;
-
-  // Global quick export
-  if($("btnExportText")){
-    $("btnExportText").onclick = ()=>{
-      const txt = exportTextReport();
-      if($("exportOut")) $("exportOut").value = txt;
-      openModal("exportModal");
-    };
-  }
-
-  // Kiffance random auto-suggest occasionally after X etorions (optional)
-  state.ui.kiffanceAutoEvery = clamp(parseInt(state.ui.kiffanceAutoEvery,10)||6, 3, 20);
-}
-
-/* =========================================================
-   FINAL BOOT
-   ========================================================= */
-(function bootPart4(){
-  ensureSelectedSet();
-  bindPart4();
-
-  // Render right panel if already open
-  if($("rightPanel") && $("rightPanel").classList.contains("open")){
-    renderRightPanel();
-  }
-
-  // Re-render on storage changes (multi-tab safety)
-  window.addEventListener("storage",(e)=>{
-    if(e.key===LS_KEY){
-      try{
-        const raw = localStorage.getItem(LS_KEY);
-        if(raw){
-          state = JSON.parse(raw);
-          // re-extend minimal
-          state.ui = state.ui || {};
-          renderAll();
-          renderRightPanel();
-        }
-      }catch(_){}
-    }
-  });
 })();
 </script>
-<script>
-/* =========================
-   PATCH COMPAT v1 — ELIMINATOR
-   Objectif: rendre ton HTML actuel compatible avec les scripts Part 2/3/4
-   À coller TOUT À LA FIN (après tes autres <script>)
-========================= */
-
-/* ---------- mini helpers ---------- */
-const _get = (id)=>document.getElementById(id);
-const _renameId = (from,to)=>{
-  const el=_get(from);
-  if(el && !_get(to)) el.id=to;
-};
-const _ensureCanvas = (id)=>{
-  const el=_get(id);
-  if(!el) return;
-  if(el.tagName.toLowerCase()==="canvas") return;
-  const c=document.createElement("canvas");
-  c.id=id;
-  // copie classes si tu en as
-  c.className = el.className || "";
-  el.replaceWith(c);
-};
-
-/* ---------- 1) Fix pollen: doit être un canvas pour setupCanvas/getContext ---------- */
-_ensureCanvas("pollen");
-
-/* ---------- 2) ID mapping: HTML -> ce que le JS Part2/3/4 attend ---------- */
-/* Panels gauche (Part2 attend drawer/drawerBack/drawerClose/drawerResizer) */
-_renameId("leftPanel","drawer");
-_renameId("leftBack","drawerBack");
-_renameId("leftClose","drawerClose");
-_renameId("leftResizer","drawerResizer");
-_renameId("btnLeft","btnMenu");
-
-/* Boutons thème/palette (Part2 attend btnMode/btnPalette + labels modeLabel/paletteLabel) */
-_renameId("btnTheme","btnMode");
-_renameId("themeLbl","modeLabel");
-_renameId("btnSeason","btnPalette");
-_renameId("seasonLbl","paletteLabel");
-
-/* Focus (Part3 attend btnFocus, mais ton HTML l’a déjà; on branche exit) */
-_renameId("btnExitFocus","btnExitFocus"); // noop, juste pour clarté
-
-/* Pomodoro (Part3 attend pomoWrap/pomoTime/pomoLabel/pomoAction/pomoStop) */
-(() => {
-  // Ton HTML n’a pas de conteneur pomoWrap; on crée une “fausse” référence en utilisant progressWrap
-  // mais on préfère mapper directement sur tes IDs existants.
-  // On va créer les IDs attendus en “alias” via clonage invisible si absent.
-  if(!_get("pomoTime") && _get("pomoTime")){} // déjà ok
-  // Ton HTML utilise: pomoTime, pomoHint, btnPomoStart, btnPomoStop, btnPomoToggle, pomoClickZone
-  // On mappe:
-  _renameId("pomoHint","pomoLabel");
-  _renameId("btnPomoStart","pomoAction");
-  // btnPomoStop existe déjà, Part3 attend "pomoStop"
-  _renameId("btnPomoStop","pomoStop");
-
-  // Conteneur wrap attendu
-  if(!_get("pomoWrap")){
-    const w = document.createElement("div");
-    w.id="pomoWrap";
-    // On n’ajoute rien visuellement, on s’en sert pour hidden/show
-    w.style.display="contents";
-    // On prend la ligne pomoRow existante (dans ta card)
-    const row = _get("pomoClickZone")?.closest(".pomoRow");
-    if(row) row.prepend(w), w.append(...Array.from(row.childNodes));
-  }
-})();
-
-/* Progress bar (Part3 attend taskBarFill/taskBarPct) */
-_renameId("barFill","taskBarFill");
-_renameId("barPct","taskBarPct");
-
-/* Current task name + chips + boutons (Part3 attend taskName/chips/btnEtorion/btnKiffance/btnEditTask/btnListToggle) */
-_renameId("etorChips","chips");
-_renameId("btnEto","btnEtorion");
-_renameId("btnKiff","btnKiffance");
-_renameId("btnEdit","btnEditTask");
-_renameId("btnList","btnListToggle");
-
-/* Below list (Part3 attend belowTasks) */
-_renameId("belowRows","belowTasks");
-
-/* Undo (Part3 attend btnUndo déjà présent) OK */
-
-/* ---------- 3) CSS vars alignment for progress colors ---------- */
-(function alignBarVars(){
-  const r = document.documentElement;
-  // si le JS a posé --bar/--bar2, on les recopie vers --barA/--barB attendus par ton CSS
-  const cs = getComputedStyle(r);
-  const bar = cs.getPropertyValue("--bar").trim();
-  const bar2 = cs.getPropertyValue("--bar2").trim();
-  if(bar && !cs.getPropertyValue("--barA").trim()) r.style.setProperty("--barA", bar);
-  if(bar2 && !cs.getPropertyValue("--barB").trim()) r.style.setProperty("--barB", bar2);
-})();
-
-/* ---------- 4) Panels open/close: ton HTML rightPanel ids déjà bons (Part2 utilise rightPanel/rightBack/rightClose/rightResizer) ---------- */
-// ok: rightPanel/rightBack/rightClose/rightResizer existent chez toi
-
-/* ---------- 5) Focus overlay wiring (Part3 toggleFocus) + bouton quitter ---------- */
-(function wireFocusExit(){
-  const exit = _get("btnExitFocus");
-  if(exit){
-    exit.addEventListener("click", ()=>{
-      // Part3 utilise state.focus; si state existe, on l’éteint proprement
-      try{
-        if(window.state){
-          window.state.focus = false;
-          if(window.saveState) window.saveState();
-          if(window.renderAll) window.renderAll();
-        }
-        const fo = _get("focusOverlay");
-        if(fo) fo.style.display = "none";
-        document.body.dataset.focus = "0";
-      }catch(e){}
-    });
-  }
-})();
-
-/* ---------- 6) Modals manquantes: créer des versions minimales pour éviter crash ---------- */
-(function ensureMinimalModals(){
-  const need = [
-    {id:"kiffModal", titleId:"kiffTitle", msgId:"kiffMsg", subId:"kiffSub"},
-    {id:"victoryModal", titleId:"victoryTitle", msgId:"victoryMsg"}
-  ];
-  need.forEach(m=>{
-    if(_get(m.id)) return;
-    const modal = document.createElement("div");
-    modal.className="modal";
-    modal.id=m.id;
-    modal.innerHTML = `
-      <div class="modalCard">
-        <div class="modalHead">
-          <div class="mh" id="${m.titleId}">${m.id==="kiffModal"?"Kiffance":"Victoire"}</div>
-          <div class="muted">Clique n’importe où pour fermer</div>
-        </div>
-        <div class="section">
-          <div id="${m.msgId}" style="font-size:16px; line-height:1.6;"></div>
-          ${m.subId ? `<div id="${m.subId}" class="muted" style="margin-top:10px"></div>` : ``}
-        </div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-  });
-
-  // calendar modal minimal si absent (Part4 l’utilise)
-  if(!_get("calendarModal")){
-    const modal = document.createElement("div");
-    modal.className="modal";
-    modal.id="calendarModal";
-    modal.innerHTML = `
-      <div class="modalCard">
-        <div class="modalHead">
-          <div class="mh" id="calendarTitle">Calendrier</div>
-          <div class="muted">Clique n’importe où pour fermer</div>
-        </div>
-        <div id="calendarBody"></div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-  }
-})();
-
-/* ---------- 7) Patch openModal/closeModal: ton CSS utilise .modalBack + .modal show? (chez toi .modal display:none sans .show)
-   On harmonise: ajoute/retire la classe show + met display:flex
----------- */
-(function patchModalDisplay(){
-  const open = window.openModal;
-  const close = window.closeModal;
-
-  window.openModal = function(id){
-    const back = _get("modalBack");
-    const el = _get(id);
-    if(!el) return;
-    if(back){ back.style.display="block"; back.classList.add("show"); }
-    el.style.display="flex";
-    el.classList.add("show");
-  };
-
-  window.closeModal = function(id){
-    const back = _get("modalBack");
-    const el = _get(id);
-    if(el){
-      el.classList.remove("show");
-      el.style.display="none";
-    }
-    const any = Array.from(document.querySelectorAll(".modal")).some(m=>m.style.display==="flex");
-    if(back && !any){
-      back.classList.remove("show");
-      back.style.display="none";
-    }
-  };
-
-  // click backdrop close
-  const back = _get("modalBack");
-  if(back){
-    back.addEventListener("click", ()=>{
-      document.querySelectorAll(".modal").forEach(m=>{ m.style.display="none"; m.classList.remove("show"); });
-      back.style.display="none";
-      back.classList.remove("show");
-    });
-  }
-})();
-
-/* ---------- 8) Final: relance render + right panel si dispo ---------- */
-setTimeout(()=>{
-  try{
-    if(window.applyTheme) window.applyTheme();
-    if(window.renderAll) window.renderAll();
-    if(window.renderRightPanel) window.renderRightPanel();
-  }catch(e){}
-}, 0);
-</script>
-
- <script>
-/* --- Saison + mode: synchronisation body dataset + labels --- */
-(function seasonModeSync(){
-  const seasonOrder = ["printemps","ete","automne","hiver"];
-
-  function applyBodySeason(){
-    // body dataset pour CSS (si tu utilises data-season)
-    document.body.setAttribute("data-season", state.ui.palette); // palette = saison
-    // et thème pour CSS (si tu utilises data-theme)
-    document.body.setAttribute("data-theme", state.ui.mode==="foncé" ? "pastel-dark" : "pastel-light");
-
-    // labels topbar
-    const themeLbl = document.getElementById("modeLabel") || document.getElementById("themeLbl");
-    const seasonLbl = document.getElementById("paletteLabel") || document.getElementById("seasonLbl");
-
-    if(themeLbl) themeLbl.textContent = state.ui.mode==="foncé" ? "pastel foncé" : "pastel clair";
-    if(seasonLbl){
-      const nice = ({printemps:"printemps", ete:"été", automne:"automne", hiver:"hiver"})[state.ui.palette] || state.ui.palette;
-      seasonLbl.textContent = nice;
-    }
-  }
-
-  // wrap applyTheme pour forcer dataset après
-  const oldApply = window.applyTheme;
-  window.applyTheme = function(){
-    if(oldApply) oldApply();
-    applyBodySeason();
-  };
-
-  // bouton saison : cycle sur 4 saisons
-  const btn = document.getElementById("btnPalette") || document.getElementById("btnSeason");
-  if(btn){
-    btn.addEventListener("click", ()=>{
-      const i = Math.max(0, seasonOrder.indexOf(state.ui.palette));
-      state.ui.palette = seasonOrder[(i+1)%seasonOrder.length];
-      if(window.saveState) saveState();
-      if(window.applyTheme) applyTheme();
-      if(window.renderAll) renderAll();
-    });
-  }
-
-  // bouton mode : clair/foncé
-  const bMode = document.getElementById("btnMode") || document.getElementById("btnTheme");
-  if(bMode){
-    bMode.addEventListener("click", ()=>{
-      state.ui.mode = (state.ui.mode==="foncé") ? "clair" : "foncé";
-      if(window.saveState) saveState();
-      if(window.applyTheme) applyTheme();
-      if(window.renderAll) renderAll();
-    });
-  }
-
-  // initial
-  applyBodySeason();
-})();
- </script> 
 </body>
 </html>
